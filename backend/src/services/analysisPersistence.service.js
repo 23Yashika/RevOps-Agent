@@ -118,5 +118,8 @@ export async function persistAnalysis(analysis, actor = "revops-agent") {
       analysisRun,
       proposedActions: createdActions,
     };
+  }, {
+    maxWait: 20000, // 20 seconds to allow Neon to wake up
+    timeout: 30000, // 30 seconds for all writes to finish
   });
 }

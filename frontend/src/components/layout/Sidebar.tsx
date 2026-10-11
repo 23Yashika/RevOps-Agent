@@ -25,7 +25,7 @@ const NAV_ITEMS = [
   { name: "Execution History", href: "/executions", icon: History },
   { name: "PostHog Analytics", href: "/posthog", icon: LineChart },
   { name: "Integrations", href: "/integrations", icon: Plug },
-  { name: "Settings", href: "/settings", icon: Settings },
+  // { name: "Settings", href: "/settings", icon: Settings },
 ];
 
 export function Sidebar() {
