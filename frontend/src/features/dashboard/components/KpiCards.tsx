@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { DollarSign, FileSpreadsheet, Clock, AlertTriangle, ShieldCheck } from "lucide-react";
+import { DollarSign, IndianRupee, FileSpreadsheet, Clock, AlertTriangle, ShieldCheck } from "lucide-react";
 
 interface KpiCardsProps {
   totalPipeline: number;
@@ -18,7 +18,7 @@ export function KpiCards({
 }: KpiCardsProps) {
   const formattedPipeline = new Intl.NumberFormat("en-US", {
     style: "currency",
-    currency: "USD",
+    currency: "INR",
     maximumFractionDigits: 0,
   }).format(totalPipeline);
 
@@ -28,10 +28,10 @@ export function KpiCards({
       <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs hover:border-slate-300 transition-colors">
         <div className="flex items-center justify-between">
           <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
-            Total Pipeline
+            Total Revenue
           </p>
           <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
-            <DollarSign className="w-4 h-4" />
+            <IndianRupee className="w-4 h-4" />
           </div>
         </div>
         <div className="mt-3">

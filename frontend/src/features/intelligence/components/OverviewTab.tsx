@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { DollarSign, AlertTriangle, ShieldCheck, Clock, CheckCircle2, Building2 } from "lucide-react";
+import { DollarSign, AlertTriangle, ShieldCheck, Clock, CheckCircle2, Building2, IndianRupee } from "lucide-react";
 import type { DealAnalysis } from "@/types";
 
 interface OverviewTabProps {
@@ -23,7 +23,7 @@ export function OverviewTab({ deal, onGoToRecommendations }: OverviewTabProps) {
         <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
           <div className="flex items-center justify-between text-slate-500">
             <span className="text-xs font-semibold uppercase tracking-wider">Deal Value</span>
-            <DollarSign className="w-4 h-4 text-blue-600" />
+            <IndianRupee className="w-4 h-4 text-blue-600" />
           </div>
           <p className="text-2xl font-bold text-slate-900 mt-2 font-mono">{formattedAmount}</p>
           <p className="text-xs text-slate-400 mt-1">Stage: {deal.stage}</p>

@@ -232,6 +232,9 @@ export async function executeProposedAction({
     return tx.proposedAction.findUnique({
       where: { id },
     });
+  }, {
+    maxWait: 20000,
+    timeout: 30000,
   });
 
   try {
@@ -269,6 +272,9 @@ export async function executeProposedAction({
       return tx.proposedAction.findUnique({
         where: { id },
       });
+    }, {
+      maxWait: 20000,
+      timeout: 30000,
     });
 
     return {

@@ -1,6 +1,5 @@
 
 import dotenv from "dotenv";
-
 dotenv.config();
 
 const [
@@ -18,6 +17,7 @@ const [
     
 ]);
 import actionsRoutes from "./src/routes/actions.routes.js";
+import posthogRoutes from "./src/routes/posthog.routes.js";
 const app = express();
 
 app.use(
@@ -27,7 +27,7 @@ app.use(
 );
 
 app.use(express.json());
-
+app.use("/api/posthog", posthogRoutes);
 app.get("/", (req, res) => {
   res.json({
     success: true,

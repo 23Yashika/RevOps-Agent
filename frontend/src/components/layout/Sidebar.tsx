@@ -24,7 +24,7 @@ const NAV_ITEMS = [
   { name: "Approval Center", href: "/approvals", icon: CheckSquare },
   { name: "Execution History", href: "/executions", icon: History },
   { name: "PostHog Analytics", href: "/posthog", icon: LineChart },
-  { name: "Integrations", href: "/integrations", icon: Plug },
+  // { name: "Integrations", href: "/integrations", icon: Plug },
   // { name: "Settings", href: "/settings", icon: Settings },
 ];
 
