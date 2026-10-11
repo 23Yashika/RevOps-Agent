@@ -7,7 +7,7 @@ import { useDashboardData } from "@/features/dashboard/hooks/useDashboardData";
 import { KpiCards } from "@/features/dashboard/components/KpiCards";
 import { RiskDistributionChart } from "@/features/dashboard/components/RiskDistributionChart";
 import { RecentActivity } from "@/features/dashboard/components/RecentActivity";
-// import { TopAccountsByRisk } from "@/features/dashboard/components/TopAccountsByRisk";
+import { TopAccountsByRisk } from "@/features/dashboard/components/TopAccountsByRisk";
 import { IntegrationHealthBanner } from "@/features/dashboard/components/IntegrationHealthBanner";
 import { CardSkeleton } from "@/components/shared/LoadingSkeleton";
 
@@ -93,7 +93,7 @@ export default function DashboardPage() {
           gmailConnected={isGoogleConnected}
         />
 
-        {/* <TopAccountsByRisk deals={analysis?.deals ?? []} /> */}
+         <TopAccountsByRisk deals={analysis?.deals ?? []} /> 
       </div>
 
       {/* 4. Integration Health Summary Banner */}

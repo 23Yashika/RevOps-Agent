@@ -16,5 +16,18 @@ build/
 
 # Logs
 *.log
-.env.local
 .env
+
+.next/
+out/
+# Dependencies
+node_modules/
+# Local Environment variables
+.env*.local
+# Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+# OS and Editor files
+.DS_Store
+*.pem
