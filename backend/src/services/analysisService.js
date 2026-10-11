@@ -527,15 +527,22 @@ export async function getRevOpsAnalysis(limit = 10) {
       valueOf(item.deal, "company") ||
       "";
 
-    const enrichedDeal = {
-      ...item.deal,
-      company: companyName,
-      associatedContacts: item.contacts ?? [],
-      properties: {
-        ...(item.deal?.properties ?? {}),
-        associatedcompanyname: companyName,
-      },
-    };
+   const enrichedDeal = {
+  ...item.deal,
+  company: companyName,
+
+  // Use the actual associated HubSpot company ID.
+  companyId: item.company?.id
+    ? String(item.company.id)
+    : null,
+
+  associatedContacts: item.contacts ?? [],
+
+  properties: {
+    ...(item.deal?.properties ?? {}),
+    associatedcompanyname: companyName,
+  },
+};
 
     const analysis = analyzeDeal(
       enrichedDeal,
@@ -546,10 +553,13 @@ export async function getRevOpsAnalysis(limit = 10) {
       integrationStatus
     );
 
-    return {
-      ...analysis,
-      associationErrors: item.associationErrors ?? [],
-    };
+   return {
+  ...analysis,
+  companyId: item.company?.id
+    ? String(item.company.id)
+    : null,
+  associationErrors: item.associationErrors ?? [],
+};
   });
 
   analyses.sort(
