@@ -1,8 +1,7 @@
-
 import "dotenv/config";
 
 const PROJECT_ID = process.env.POSTHOG_PROJECT_ID;
-const API_KEY = process.env.POSTHOG_PERSONAL_API_KEY;
+const API_KEY = process.env.POSTHOG_PERSONAL_API_KEY || process.env.POSTHOG_API_KEY;
 const POSTHOG_HOST = (
   process.env.POSTHOG_HOST || "https://us.posthog.com"
 ).replace(/\/$/, "");
