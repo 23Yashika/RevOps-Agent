@@ -1,0 +1,12 @@
+# Environment files and secrets
+.env
+.env.*
+!.env.example
+
+# Ignore environment files in nested folders
+**/.env
+*/.env.
+!**/.env.example
+
+# Dependencies
+node_modules/

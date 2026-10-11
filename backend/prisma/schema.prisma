@@ -1,0 +1,73 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model AnalysisRun {
+  id            String           @id @default(cuid())
+  accountName   String
+  evidence      Json
+  modelOutput   Json
+  promptVersion String           @default("v1")
+  modelName     String?
+  createdAt     DateTime         @default(now())
+  actions       ProposedAction[]
+
+  @@index([accountName, createdAt])
+}
+
+model ProposedAction {
+  id            String       @id @default(cuid())
+  accountName   String
+  type          ActionType
+  payload       Json
+  rationale     String
+  evidenceIds   Json
+  status        ActionStatus @default(PENDING)
+  approver      String?
+  approvalNote  String?
+  approvedAt    DateTime?
+  rejectedAt    DateTime?
+  executedAt    DateTime?
+  externalId    String?
+  errorMessage  String?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  analysisRunId String?
+  auditLogs     AuditLog[]
+  analysisRun   AnalysisRun? @relation(fields: [analysisRunId], references: [id])
+
+  @@index([status, createdAt])
+  @@index([accountName, createdAt])
+}
+
+model AuditLog {
+  id               String          @id @default(cuid())
+  action           String
+  actor            String
+  details          Json
+  createdAt        DateTime        @default(now())
+  proposedActionId String?
+  proposedAction   ProposedAction? @relation(fields: [proposedActionId], references: [id])
+
+  @@index([proposedActionId, createdAt])
+}
+
+enum ActionStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  EXECUTING
+  EXECUTED
+  FAILED
+}
+
+enum ActionType {
+  NOTIFY_OWNER
+  DRAFT_EMAIL
+  CREATE_TASK
+  UPDATE_CRM
+}
