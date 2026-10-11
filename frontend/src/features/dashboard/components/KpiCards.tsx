@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { DollarSign, IndianRupee, FileSpreadsheet, Clock, AlertTriangle, ShieldCheck } from "lucide-react";
+import { DollarSign,IndianRupee , FileSpreadsheet, Clock, AlertTriangle, ShieldCheck } from "lucide-react";
 
 interface KpiCardsProps {
   totalPipeline: number;
@@ -25,12 +25,12 @@ export function KpiCards({
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       {/* 1. Total Pipeline */}
-      <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs hover:border-slate-300 transition-colors">
+      <div className="bg-cardBg p-5 rounded-2xl border border-borderColor shadow-xs hover:border-borderColor/80 transition-colors">
         <div className="flex items-center justify-between">
           <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
             Total Revenue
           </p>
-          <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
+          <div className="w-8 h-8 rounded-lg bg-lightSurface text-primaryDarkBrown flex items-center justify-center">
             <IndianRupee className="w-4 h-4" />
           </div>
         </div>
@@ -46,12 +46,12 @@ export function KpiCards({
       </div>
 
       {/* 2. Deals Analyzed */}
-      <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs hover:border-slate-300 transition-colors">
+      <div className="bg-cardBg p-5 rounded-2xl border border-borderColor shadow-xs hover:border-borderColor/80 transition-colors">
         <div className="flex items-center justify-between">
           <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
             Deals Analyzed
           </p>
-          <div className="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center">
+          <div className="w-8 h-8 rounded-lg bg-lightSurface text-primaryDarkBrown flex items-center justify-center">
             <FileSpreadsheet className="w-4 h-4" />
           </div>
         </div>
@@ -67,12 +67,12 @@ export function KpiCards({
       </div>
 
       {/* 3. Pending Actions */}
-      <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs hover:border-slate-300 transition-colors">
+      <div className="bg-cardBg p-5 rounded-2xl border border-borderColor shadow-xs hover:border-borderColor/80 transition-colors">
         <div className="flex items-center justify-between">
           <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
             Pending Actions
           </p>
-          <div className="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center">
+          <div className="w-8 h-8 rounded-lg bg-lightSurface text-primaryDarkBrown flex items-center justify-center">
             <Clock className="w-4 h-4" />
           </div>
         </div>
@@ -93,7 +93,7 @@ export function KpiCards({
       </div>
 
       {/* 4. High-Risk Deals */}
-      <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs hover:border-slate-300 transition-colors">
+      <div className="bg-cardBg p-5 rounded-2xl border border-borderColor shadow-xs hover:border-borderColor/80 transition-colors">
         <div className="flex items-center justify-between">
           <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
             High-Risk Deals

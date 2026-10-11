@@ -19,7 +19,7 @@ export function EvidenceModal({ evidence, onClose }: EvidenceModalProps) {
         {/* Modal Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-slate-50/50">
           <div className="flex items-center gap-2">
-            <div className="p-1.5 rounded-lg bg-blue-50 text-blue-600">
+            <div className="p-1.5 rounded-lg bg-dark-brown-50 text-dark-brown-600">
               {evidence.type === "email" ? (
                 <Mail className="w-4 h-4" />
               ) : evidence.type === "calendar" ? (
@@ -32,8 +32,8 @@ export function EvidenceModal({ evidence, onClose }: EvidenceModalProps) {
               {evidence.type === "email"
                 ? "Email Activity Record"
                 : evidence.type === "calendar"
-                ? "Calendar Meeting Record"
-                : "CRM Evidence Record"}
+                  ? "Calendar Meeting Record"
+                  : "CRM Evidence Record"}
             </h3>
           </div>
           <button
@@ -48,11 +48,10 @@ export function EvidenceModal({ evidence, onClose }: EvidenceModalProps) {
         <div className="p-6 space-y-4 text-xs">
           {/* Demo/Live Banner */}
           <div
-            className={`p-3 rounded-xl border flex items-start gap-2.5 ${
-              isDemo
+            className={`p-3 rounded-xl border flex items-start gap-2.5 ${isDemo
                 ? "bg-amber-50 border-amber-200 text-amber-900"
                 : "bg-emerald-50 border-emerald-200 text-emerald-900"
-            }`}
+              }`}
           >
             {isDemo ? (
               <ShieldAlert className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />

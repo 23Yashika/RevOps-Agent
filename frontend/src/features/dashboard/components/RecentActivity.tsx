@@ -31,7 +31,7 @@ export function RecentActivity({
       <div className="flex-1 divide-y divide-slate-100 py-2">
         {/* Activity Item 1: Analysis Run */}
         <div className="py-3 flex items-start gap-3">
-          <div className="w-7 h-7 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 mt-0.5">
+          <div className="w-7 h-7 rounded-lg bg-dark-brown-50 text-dark-brown-600 flex items-center justify-center shrink-0 mt-0.5">
             <Sparkles className="w-3.5 h-3.5" />
           </div>
           <div className="flex-1 min-w-0">

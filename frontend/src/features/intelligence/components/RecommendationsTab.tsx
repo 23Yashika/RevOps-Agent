@@ -20,7 +20,7 @@ export function RecommendationsTab({ deal }: RecommendationsTabProps) {
       <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs space-y-5">
         <div className="flex items-center justify-between pb-3 border-b border-slate-100">
           <div className="flex items-center gap-2.5">
-            <div className="p-2 rounded-xl bg-blue-50 text-blue-600">
+            <div className="p-2 rounded-xl bg-dark-brown-50 text-dark-brown-600">
               <ShieldCheck className="w-5 h-5" />
             </div>
             <div>
@@ -54,10 +54,10 @@ export function RecommendationsTab({ deal }: RecommendationsTabProps) {
         </div>
 
         {/* Action Button */}
-        <div className="pt-2 flex items-center justify-end">
+        <div className="pt-2 flex items-center  bg-brown justify-end">
           <Link
             href="/approvals"
-            className="inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-semibold shadow-md shadow-blue-500/20 transition-all cursor-pointer"
+            className="inline-flex text-white items-center bg-[#5A4330] hover:bg-[#30241D] gap-2 px-5 py-2.5  rounded-xl text-xs font-semibold shadow-md shadow-dark-brown-500/20 transition-all cursor-pointer"
           >
             <span>Review in Approval Center</span>
             <ArrowRight className="w-4 h-4" />

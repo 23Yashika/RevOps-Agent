@@ -19,7 +19,7 @@ export function ActionDetailModal({ action, onClose }: ActionDetailModalProps) {
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-slate-50/50">
           <div className="flex items-center gap-2">
-            <div className="p-1.5 rounded-lg bg-blue-50 text-blue-600">
+            <div className="p-1.5 rounded-lg bg-dark-brown-50 text-dark-brown-600">
               <FileText className="w-4 h-4" />
             </div>
             <div>
@@ -57,7 +57,7 @@ export function ActionDetailModal({ action, onClose }: ActionDetailModalProps) {
               <span className="text-[10px] uppercase font-bold text-slate-400 block">
                 Action Type
               </span>
-              <span className="font-mono font-semibold text-blue-600">
+              <span className="font-mono font-semibold text-dark-brown-600">
                 {action.type}
               </span>
             </div>
@@ -83,18 +83,18 @@ export function ActionDetailModal({ action, onClose }: ActionDetailModalProps) {
 
           {/* Reviewer Information */}
           {action.approver && (
-            <div className="p-3 bg-blue-50/60 rounded-xl border border-blue-200/60 flex items-start gap-2.5">
-              <User className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
+            <div className="p-3 bg-dark-brown-50/60 rounded-xl border border-dark-brown-200/60 flex items-start gap-2.5">
+              <User className="w-4 h-4 text-dark-brown-600 shrink-0 mt-0.5" />
               <div>
-                <p className="font-bold text-blue-900">
+                <p className="font-bold text-dark-brown-900">
                   Reviewed by {action.approver}
                 </p>
                 {action.approvalNote && (
-                  <p className="text-blue-800 text-[11px] mt-0.5">
+                  <p className="text-dark-brown-800 text-[11px] mt-0.5">
                     Note: "{action.approvalNote}"
                   </p>
                 )}
-                <p className="text-[10px] text-blue-600 mt-0.5">
+                <p className="text-[10px] text-dark-brown-600 mt-0.5">
                   Timestamp:{" "}
                   {new Date(
                     action.approvedAt || action.rejectedAt || action.createdAt

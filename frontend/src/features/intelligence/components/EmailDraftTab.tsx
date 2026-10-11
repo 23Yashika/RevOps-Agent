@@ -74,9 +74,9 @@ Revenue Operations`;
         {/* Actions */}
         <div className="pt-2 flex justify-end">
           <button
-            onClick={handleCopy}
-            className="inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-semibold shadow-md shadow-blue-500/20 transition-all cursor-pointer"
-          >
+  onClick={handleCopy}
+  className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#5A4330] hover:bg-[#30241D] text-white rounded-xl text-xs font-semibold shadow-md shadow-[#5A4330]/20 transition-all cursor-pointer"
+>
             {copied ? (
               <>
                 <Check className="w-4 h-4 text-emerald-300" />

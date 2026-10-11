@@ -69,9 +69,8 @@ export function ExecutionsTable({
                 <tr
                   key={action.id}
                   onClick={() => onSelectAction(action)}
-                  className={`transition-colors cursor-pointer ${
-                    isSelected ? "bg-blue-50/50" : "hover:bg-slate-50/70"
-                  }`}
+                  className={`transition-colors cursor-pointer ${isSelected ? "bg-dark-brown-50/50" : "hover:bg-slate-50/70"
+                    }`}
                 >
                   {/* Action */}
                   <td className="py-4 px-5">
@@ -90,7 +89,7 @@ export function ExecutionsTable({
 
                   {/* Type */}
                   <td className="py-4 px-4">
-                    <span className="font-mono text-[11px] font-semibold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md">
+                    <span className="font-mono text-[11px] font-semibold text-dark-brown-600 bg-dark-brown-50 px-2 py-0.5 rounded-md">
                       {action.type}
                     </span>
                   </td>

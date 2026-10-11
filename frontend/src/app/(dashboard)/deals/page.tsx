@@ -132,7 +132,7 @@ export default function DealsPage() {
             totalCount > 0 ? (
               <button
                 onClick={handleResetFilters}
-                className="px-4 py-2 bg-blue-600 text-white text-xs font-semibold rounded-xl hover:bg-blue-700 transition-colors cursor-pointer"
+                className="px-4 py-2 bg-dark-brown-600 text-white text-xs font-semibold rounded-xl hover:bg-dark-brown-700 transition-colors cursor-pointer"
               >
                 Reset Filters
               </button>

@@ -40,17 +40,17 @@ export function Sidebar() {
   };
 
   const navContent = (
-    <div className="flex flex-col h-full bg-[#0F172A] text-slate-300 w-64 border-r border-slate-800">
+    <div className="flex flex-col h-full bg-sidebarBg text-textPrimary w-64 border-r border-borderColor">
       <div className="flex items-center justify-between px-6 py-5 border-b border-slate-800">
         <Link href="/dashboard" className="flex items-center gap-3 group">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white shadow-md shadow-blue-500/20 group-hover:scale-105 transition-transform">
+          <div className="w-9 h-9 rounded-xl bg-primaryDarkBrown flex items-center justify-center text-white shadow-md group-hover:scale-105 transition-transform">
             <BrainCircuit className="w-5 h-5" />
           </div>
           <div>
-            <h1 className="font-bold text-white tracking-tight text-lg leading-tight">
+            <h1 className="font-bold text-textPrimary tracking-tight text-lg leading-tight">
               RevOps Agent
             </h1>
-            <p className="text-[10px] text-blue-400 font-semibold tracking-wider uppercase">
+            <p className="text-[10px] text-primaryDarkBrown font-semibold tracking-wider uppercase">
               Revenue Intelligence
             </p>
           </div>
@@ -74,27 +74,27 @@ export function Sidebar() {
               onClick={() => setMobileOpen(false)}
               className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 ${
                 active
-                  ? "bg-blue-600 text-white shadow-md shadow-blue-600/25 font-semibold"
-                  : "text-slate-400 hover:bg-slate-800/70 hover:text-slate-100"
+                  ? "bg-primaryAction text-cardBg shadow-md font-semibold"
+                  : "text-primaryDarkBrown hover:bg-activeNavBg hover:text-primaryDarkBrown"
               }`}
             >
-              <Icon className={`w-4 h-4 ${active ? "text-white" : "text-slate-400"}`} />
+              <Icon className={`w-4 h-4 ${active ? "text-cardBg" : "text-primaryDarkBrown"}`} />
               <span>{item.name}</span>
             </Link>
           );
         })}
       </nav>
 
-      <div className="p-4 border-t border-slate-800/80 bg-slate-950/40">
-        <div className="flex items-center gap-3 p-2 rounded-xl bg-slate-900/80 border border-slate-800">
-          <div className="w-8 h-8 rounded-lg bg-blue-500/20 border border-blue-500/30 flex items-center justify-center text-blue-400 font-semibold text-xs">
+      <div className="p-4 border-t border-slate-800/80 bg-[#D8C9B5]">
+        <div className="flex items-center gap-3 p-2 rounded-xl bg-cardBg border border-borderColor">
+          <div className="w-8 h-8 rounded-lg bg-primaryDarkBrown/20 border border-primaryDarkBrown/30 flex items-center justify-center text-cardBg font-semibold text-xs">
             PM
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-xs font-semibold text-slate-200 truncate">
+            <p className="text-xs font-semibold text-primaryDarkBrown truncate">
               Parthika Mahajan
             </p>
-            <div className="flex items-center gap-1 text-[10px] text-slate-400">
+            <div className="flex items-center gap-1 text-[10px] text-secondary">
               <ShieldCheck className="w-3 h-3 text-emerald-400" />
               <span>Reviewer</span>
             </div>

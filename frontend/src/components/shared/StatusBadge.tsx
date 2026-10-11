@@ -13,7 +13,7 @@ export function StatusBadge({ status, className = "" }: StatusBadgeProps) {
       label: "Pending Review",
     },
     APPROVED: {
-      bg: "bg-blue-100 text-blue-800 border-blue-300",
+      bg: "bg-primaryAction/20 text-primaryDarkBrown border-primaryAction/30",
       label: "Approved",
     },
     REJECTED: {

@@ -9,14 +9,27 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        sidebar: {
-          bg: "#0F172A",
-          hover: "#1E293B",
-          active: "#1E293B",
-          text: "#94A3B8",
-          textActive: "#FFFFFF",
-          border: "#334155",
-        },
+        // Premium UI palette
+        pageBg: "#F6F2EB",
+        cardBg: "#FFFDFA",
+        lightSurface: "#EEE5D8",
+        sidebarBg: "#E8DDCC",
+        sidebarDarkBg: "#33271F",
+        primaryDarkBrown: "#4A3728",
+        espressoBrown: "#30241D",
+        primaryAction: "#6F5038",
+        buttonHover: "#503925",
+        champagneGold: "#B89562",
+        activeNavBg: "#D8C5AB",
+        textPrimary: "#302820",
+        textSecondary: "#75695C",
+        textMuted: "#9B9083",
+        borderColor: "#DED3C4",
+        hoverBg: "#F0E7DB",
+        success: "#477653",
+        warning: "#B77C28",
+        danger: "#A64E45",
+        // Preserve existing brand and risk definitions
         brand: {
           50: "#EFF6FF",
           100: "#DBEAFE",

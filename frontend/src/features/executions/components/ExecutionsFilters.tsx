@@ -35,7 +35,7 @@ export function ExecutionsFilters({
         <select
           value={selectedStatus}
           onChange={(e) => onStatusChange(e.target.value)}
-          className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+          className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-dark-brown-brown-500/20 focus:bdark-brownr-dark-brown-500"
         >
           <option value="ALL">All Statuses</option>
           <option value="EXECUTED">EXECUTED</option>
@@ -49,7 +49,7 @@ export function ExecutionsFilters({
         <select
           value={selectedType}
           onChange={(e) => onTypeChange(e.target.value)}
-          className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+          className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-dark-brown-brown-500/20 focus:bdark-brownr-dark-brown-500"
         >
           <option value="ALL">All Actions</option>
           <option value="NOTIFY_OWNER">NOTIFY_OWNER</option>
@@ -73,7 +73,7 @@ export function ExecutionsFilters({
           value={searchQuery}
           onChange={(e) => onSearchChange(e.target.value)}
           placeholder="Search by account..."
-          className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+          className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-dark-brown-brown-500/20 focus:bdark-brownr-dark-brown-500 transition-all"
         />
         {searchQuery && (
           <button

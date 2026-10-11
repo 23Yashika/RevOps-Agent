@@ -22,7 +22,7 @@ export function TopAccountsByRisk({ deals }: TopAccountsByRiskProps) {
         </div>
         <Link
           href="/deals"
-          className="text-xs font-semibold text-blue-600 hover:text-blue-700 flex items-center gap-1"
+          className="text-xs font-semibold text-dark-brown-600 hover:text-dark-brown-700 flex items-center gap-1"
         >
           <span>View all</span>
           <ArrowRight className="w-3 h-3" />
@@ -36,7 +36,7 @@ export function TopAccountsByRisk({ deals }: TopAccountsByRiskProps) {
             return (
               <div
                 key={dealId}
-                className="py-3 flex items-center justify-between gap-3 hover:bg-slate-50/60 rounded-xl px-2 -mx-2 transition-colors"
+                className="py-3 flex items-center justify-between gap-3 bg-cardBg border border-borderColor rounded-xl px-2 -mx-2 transition-colors hover:bg-slate-50/60"
               >
                 <div className="flex items-center gap-3 min-w-0">
                   <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-500 shrink-0">
@@ -56,7 +56,7 @@ export function TopAccountsByRisk({ deals }: TopAccountsByRiskProps) {
                   <RiskBadge level={deal.riskLevel} score={deal.riskScore} />
                   <Link
                     href={`/intelligence/${dealId}`}
-                    className="p-1 rounded-md text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-colors"
+                    className="p-1 rounded-md text-slate-400 hover:text-[#5A4330] hover:bg-[#F0E8DC] transition-colors"
                     title="View Deal Intelligence"
                   >
                     <ArrowRight className="w-3.5 h-3.5" />

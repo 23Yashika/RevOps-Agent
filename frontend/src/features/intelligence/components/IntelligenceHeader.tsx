@@ -24,7 +24,7 @@ export function IntelligenceHeader({ deal }: IntelligenceHeaderProps) {
       <div>
         <Link
           href="/deals"
-          className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-blue-600 transition-colors"
+          className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-dark-brown-600 transition-colors"
         >
           <ArrowLeft className="w-3.5 h-3.5" />
           <span>Back to Deals</span>
@@ -34,7 +34,7 @@ export function IntelligenceHeader({ deal }: IntelligenceHeaderProps) {
       {/* Main Deal Header Bar */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pt-1">
         <div className="flex items-start gap-3.5">
-          <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center font-bold text-base shrink-0 shadow-md shadow-blue-500/20">
+          <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-dark-brown-600 to-indigo-600 text-white flex items-center justify-center font-bold text-base shrink-0 shadow-md shadow-dark-brown-500/20">
             <Building className="w-5 h-5" />
           </div>
           <div>

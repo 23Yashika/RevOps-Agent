@@ -52,7 +52,7 @@ export default function IntelligencePage() {
           action={
             <Link
               href="/deals"
-              className="inline-flex items-center gap-1.5 px-4 py-2 bg-blue-600 text-white text-xs font-semibold rounded-xl hover:bg-blue-700 transition-colors"
+              className="inline-flex items-center gap-1.5 px-4 py-2 bg-dark-brown-600 text-white text-xs font-semibold rounded-xl hover:bg-dark-brown-700 transition-colors"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
               <span>Back to Deals</span>
@@ -85,11 +85,10 @@ export default function IntelligencePage() {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id as any)}
-              className={`px-4 py-2.5 text-xs font-semibold whitespace-nowrap transition-colors border-b-2 cursor-pointer ${
-                active
-                  ? "border-blue-600 text-blue-600 font-bold"
+              className={`px-4 py-2.5 text-xs font-semibold whitespace-nowrap transition-colors border-b-2 cursor-pointer ${active
+                  ? "border-dark-brown-600 text-dark-brown-600 font-bold"
                   : "border-transparent text-slate-500 hover:text-slate-900 hover:border-slate-300"
-              }`}
+                }`}
             >
               {tab.label}
             </button>

@@ -32,7 +32,7 @@ export function useDashboardData() {
     staleTime: Infinity, // Keep in memory until manually refetched
   });
 
-  // 4. Mutation to Run AI Analysis on explicit user click
+  // 4. Mutation to  Analysis on explicit user click
   const runAnalysisMutation = useMutation({
     mutationFn: () => api.getAnalysis(10),
     onSuccess: (data) => {
@@ -95,11 +95,11 @@ export function useDashboardData() {
     runAnalysis: () => runAnalysisMutation.mutate(),
     lastAnalysisTime: analysis?.generatedAt
       ? new Date(analysis.generatedAt).toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-          month: "short",
-          day: "numeric",
-        })
+        hour: "2-digit",
+        minute: "2-digit",
+        month: "short",
+        day: "numeric",
+      })
       : null,
   };
 }

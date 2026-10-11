@@ -117,15 +117,17 @@ export function ActionConfirmDialog({
           <button
             onClick={handleConfirm}
             disabled={isSubmitting}
-            className={`px-4 py-2 rounded-xl text-xs font-semibold text-white shadow-xs transition-colors flex items-center gap-1.5 cursor-pointer ${
+            className={`px-4 py-2 rounded-xl text-xs bg-white font-semibold border  border-slate-200  text-red-500 hover:bg-slate-100 border-red-500 shadow-xs transition-colors flex items-center gap-1.5 cursor-pointer ${
               type === "APPROVE"
-                ? "bg-blue-600 hover:bg-blue-700"
+                ? "bg-green-600 hover:bg-green-700"
                 : type === "REJECT"
                 ? "bg-rose-600 hover:bg-rose-700"
                 : "bg-emerald-600 hover:bg-emerald-700"
             }`}
           >
-            {isSubmitting && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
+            {isSubmitting && (
+              <Loader2 className="w-3.5 h-3.5 border border-black animate-spin" />
+            )}
             <span>
               {type === "APPROVE"
                 ? "Confirm Approval"

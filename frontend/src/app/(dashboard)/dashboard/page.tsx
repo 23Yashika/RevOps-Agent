@@ -34,7 +34,7 @@ export default function DashboardPage() {
     <button
       onClick={runAnalysis}
       disabled={isAnalyzing}
-      className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 active:bg-blue-800 disabled:opacity-70 text-white text-xs font-semibold shadow-md shadow-blue-500/20 transition-all duration-150 cursor-pointer"
+      className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-primaryAction hover:bg-primaryDarkBrown disabled:opacity-70 text-cardBg text-xs font-semibold shadow-md transition-all duration-150 hover:shadow-lg hover:-translate-y-px active:translate-y-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-champagneGold cursor-pointer"
     >
       {isAnalyzing ? (
         <>
