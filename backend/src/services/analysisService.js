@@ -6,52 +6,15 @@ import {
   getHubSpotDealRelationships,
 } from "./hubspotService.js";
 
+import { fetchGmailThreads } from "./gmail.service.js";
+import { getCalendarSignals } from "./calendar.service.js";
+
 import {
   mockEmails,
   mockCalendarEvents,
 } from "../data/mockRevOpsData.js";
 
-const BACKEND_URL = `http://localhost:${process.env.PORT || 5000}`;
-
 const DEMO_MODE = process.env.REVOPS_DEMO_MODE === "true";
-
-console.log("REVOPS DEMO MODE:", process.env.REVOPS_DEMO_MODE);
-console.log("DEMO_MODE enabled:", DEMO_MODE);
-// ---------------------------------------------
-// GOOGLE DATA
-// ---------------------------------------------
-
-async function getGoogleData(path) {
-  try {
-    const response = await fetch(`${BACKEND_URL}/api/google/${path}`);
-    const result = await response.json();
-
-    if (!response.ok || !result.success) {
-      return {
-        success: false,
-        data: [],
-        error:
-          result.message ||
-          result.error ||
-          `Google ${path} request failed`,
-      };
-    }
-
-    return {
-      success: true,
-      data: Array.isArray(result.data) ? result.data : [],
-      error: null,
-    };
-  } catch (error) {
-    console.error(`Google ${path} fetch failed:`, error.message);
-
-    return {
-      success: false,
-      data: [],
-      error: error.message,
-    };
-  }
-}
 
 // ---------------------------------------------
 // GENERAL HELPERS
@@ -82,6 +45,206 @@ function normalize(value) {
     .replace(/\s+/g, " ");
 }
 
+function firstValue(...values) {
+  return (
+    values.find(
+      (value) =>
+        value !== undefined &&
+        value !== null &&
+        value !== ""
+    ) ?? ""
+  );
+}
+
+function headerValue(headers, name) {
+  if (!headers) return "";
+
+  if (Array.isArray(headers)) {
+    const found = headers.find(
+      (item) => normalize(item?.name) === normalize(name)
+    );
+
+    return found?.value ?? "";
+  }
+
+  const key = Object.keys(headers).find(
+    (item) => normalize(item) === normalize(name)
+  );
+
+  return key ? headers[key] ?? "" : "";
+}
+
+// ---------------------------------------------
+// GMAIL NORMALIZATION
+// ---------------------------------------------
+
+function getMessageBody(message) {
+  const direct = firstValue(
+    message?.snippet,
+    message?.bodyPreview,
+    message?.body,
+    message?.textBody,
+    message?.text
+  );
+
+  if (typeof direct === "string") {
+    return direct;
+  }
+
+  const parts = message?.payload?.parts;
+
+  if (Array.isArray(parts)) {
+    return parts
+      .map((part) =>
+        firstValue(
+          part?.body?.data,
+          part?.body,
+          part?.text
+        )
+      )
+      .filter((item) => typeof item === "string")
+      .join(" ");
+  }
+
+  return "";
+}
+
+function normalizeGmailMessage(message, thread = {}) {
+  const headers =
+    message?.headers ??
+    message?.payload?.headers ??
+    message?.payload?.header ??
+    {};
+
+  const from = firstValue(
+    message?.from,
+    message?.sender,
+    headerValue(headers, "From")
+  );
+
+  const to = firstValue(
+    message?.to,
+    message?.recipients,
+    headerValue(headers, "To")
+  );
+
+  const subject = firstValue(
+    message?.subject,
+    headerValue(headers, "Subject"),
+    thread?.subject
+  );
+
+  const rawDate = firstValue(
+    message?.date,
+    message?.internalDate,
+    headerValue(headers, "Date"),
+    thread?.date
+  );
+
+  let date = rawDate;
+
+  if (rawDate && /^\d+$/.test(String(rawDate))) {
+    const numeric = Number(rawDate);
+
+    date = new Date(
+      String(rawDate).length > 11
+        ? numeric
+        : numeric * 1000
+    ).toISOString();
+  }
+
+  return {
+    id:
+      message?.id ??
+      message?.messageId ??
+      thread?.id ??
+      null,
+
+    threadId:
+      message?.threadId ??
+      thread?.id ??
+      null,
+
+    subject: String(subject || ""),
+
+    from:
+      typeof from === "object"
+        ? JSON.stringify(from)
+        : String(from || ""),
+
+    to: Array.isArray(to)
+      ? to.join(", ")
+      : String(to || ""),
+
+    date: date ? String(date) : "",
+
+    snippet: String(
+      firstValue(
+        message?.snippet,
+        message?.bodyPreview,
+        getMessageBody(message)
+      ) || ""
+    ).slice(0, 1200),
+
+    demo: false,
+  };
+}
+
+function extractThreads(result) {
+  const data = result?.data;
+
+  if (Array.isArray(data)) return data;
+  if (Array.isArray(data?.threads)) return data.threads;
+  if (Array.isArray(data?.items)) return data.items;
+  if (Array.isArray(data?.results)) return data.results;
+  if (Array.isArray(result?.threads)) return result.threads;
+  if (Array.isArray(result?.items)) return result.items;
+
+  return [];
+}
+
+function normalizeGmailThreads(result) {
+  if (result?.successful === false) {
+    const message =
+      typeof result.error === "string"
+        ? result.error
+        : result.error?.message;
+
+    throw new Error(
+      message || "Composio Gmail request failed."
+    );
+  }
+
+  const threads = extractThreads(result);
+  const messages = [];
+
+  for (const thread of threads) {
+    const nested = Array.isArray(thread?.messages)
+      ? thread.messages
+      : Array.isArray(thread?.data?.messages)
+        ? thread.data.messages
+        : null;
+
+    if (nested?.length) {
+      for (const message of nested) {
+        messages.push(
+          normalizeGmailMessage(message, thread)
+        );
+      }
+    } else {
+      messages.push(
+        normalizeGmailMessage(thread, thread)
+      );
+    }
+  }
+
+  return messages;
+}
+
+// ---------------------------------------------
+// MATCHING HELPERS
+// ---------------------------------------------
+
 function getEmailText(email) {
   return normalize(
     [
@@ -109,7 +272,10 @@ function getEventText(event) {
 
 function getContactName(contact) {
   return normalize(
-    `${valueOf(contact, "firstname")} ${valueOf(contact, "lastname")}`
+    `${valueOf(contact, "firstname")} ${valueOf(
+      contact,
+      "lastname"
+    )}`
   );
 }
 
@@ -125,7 +291,6 @@ function getCompanyDomain(company) {
     .split(":")[0];
 }
 
-// Match complete phrases rather than arbitrary substrings.
 function containsPhrase(text, phrase) {
   const normalizedText = normalize(text);
   const normalizedPhrase = normalize(phrase);
@@ -182,7 +347,9 @@ function findRelatedEmails({
   );
 
   const contactEmails = associatedContacts
-    .map((contact) => normalize(valueOf(contact, "email")))
+    .map((contact) =>
+      normalize(valueOf(contact, "email"))
+    )
     .filter(Boolean);
 
   return emails.filter((email) => {
@@ -199,7 +366,11 @@ function findRelatedEmails({
       (name) => containsPhrase(text, name)
     );
 
-    return matchesContact || matchesDomain || matchesCompany;
+    return (
+      matchesContact ||
+      matchesDomain ||
+      matchesCompany
+    );
   });
 }
 
@@ -266,7 +437,6 @@ function analyzeDeal(
     valueOf(deal, "associatedcompanyname") ||
     "";
 
-  // Find the matching company record.
   const company =
     companies.find(
       (item) =>
@@ -330,7 +500,7 @@ function analyzeDeal(
     );
   }
 
-  // 4. Find emails related to this deal.
+  // 4. Related emails.
   const relatedEmails = findRelatedEmails({
     companyName,
     company,
@@ -342,7 +512,7 @@ function analyzeDeal(
     evidence.push(
       `${relatedEmails.length} email(s) matched the deal or company.`
     );
-  } else if (!integrationStatus.gmail && !DEMO_MODE) {
+  } else if (!integrationStatus.gmail) {
     evidence.push(
       "Gmail is unavailable. Email activity could not be verified."
     );
@@ -356,7 +526,7 @@ function analyzeDeal(
     );
   }
 
-  // 5. Find associated contacts.
+  // 5. Associated contacts.
   const relatedContacts =
     associatedContacts.length > 0
       ? associatedContacts
@@ -382,7 +552,7 @@ function analyzeDeal(
     );
   }
 
-  // 6. Find relevant calendar events.
+  // 6. Related calendar events.
   const relatedEvents = findRelatedEvents({
     companyName,
     company,
@@ -394,13 +564,13 @@ function analyzeDeal(
     evidence.push(
       `${relatedEvents.length} calendar event(s) matched the company or contacts.`
     );
-  } else if (!integrationStatus.calendar && !DEMO_MODE) {
+  } else if (!integrationStatus.calendar) {
     evidence.push(
       "Calendar is unavailable. Meeting activity could not be verified."
     );
   }
 
-  // 7. Provide a fallback recommendation.
+  // 7. Fallback recommendation.
   if (recommendations.length === 0) {
     if (relatedEvents.length > 0) {
       recommendations.push(
@@ -428,6 +598,7 @@ function analyzeDeal(
     closeDate: closeDate || null,
 
     riskScore: score,
+
     riskLevel:
       score >= 50
         ? "high"
@@ -470,21 +641,75 @@ function analyzeDeal(
 // ---------------------------------------------
 
 export async function getRevOpsAnalysis(limit = 10) {
-  const [
-    companies,
-    contacts,
-    deals,
-    gmailResult,
-    calendarResult,
-  ] = await Promise.all([
+  // Step 1: Retrieve HubSpot data.
+  const [companies, contacts, deals] = await Promise.all([
     getHubSpotCompanies(limit),
     getHubSpotContacts(limit),
     getHubSpotDeals(limit),
-    getGoogleData("gmail"),
-    getGoogleData("calendar"),
   ]);
 
-  // Resolve each deal's real HubSpot associations.
+  // Step 2: Retrieve Gmail and Calendar data directly.
+  const [gmailResult, calendarResult] = await Promise.all([
+    (async () => {
+      try {
+        const raw = await fetchGmailThreads({
+          maxResults: 25,
+          query: "newer_than:90d",
+          verbose: true,
+        });
+
+        return {
+          success: true,
+          data: normalizeGmailThreads(raw),
+          error: null,
+        };
+      } catch (error) {
+        console.error(
+          "Composio Gmail fetch failed:",
+          error.message
+        );
+
+        return {
+          success: false,
+          data: [],
+          error: error.message || "Gmail fetch failed",
+        };
+      }
+    })(),
+
+    (async () => {
+      try {
+        const normalized = await getCalendarSignals({
+          maxResults: 100,
+        });
+
+        const realEvents = normalized.map((event) => ({
+          ...event,
+          summary: event.title,
+          demo: false,
+        }));
+
+        return {
+          success: true,
+          data: realEvents,
+          error: null,
+        };
+      } catch (error) {
+        console.error(
+          "Composio Calendar fetch failed:",
+          error.message
+        );
+
+        return {
+          success: false,
+          data: [],
+          error: error.message || "Calendar fetch failed",
+        };
+      }
+    })(),
+  ]);
+
+  // Step 3: Resolve actual HubSpot associations.
   const enrichedDeals = await Promise.all(
     deals.map(async (deal) => {
       try {
@@ -505,14 +730,17 @@ export async function getRevOpsAnalysis(limit = 10) {
     })
   );
 
-  // Select real or synthetic activity.
+  // Step 4: Separate live records from synthetic records.
+  const liveEmails = gmailResult.data;
+  const liveEvents = calendarResult.data;
+
   const emails = DEMO_MODE
-    ? [...gmailResult.data, ...mockEmails]
-    : gmailResult.data;
+    ? [...liveEmails, ...mockEmails]
+    : liveEmails;
 
   const events = DEMO_MODE
-    ? [...calendarResult.data, ...mockCalendarEvents]
-    : calendarResult.data;
+    ? [...liveEvents, ...mockCalendarEvents]
+    : liveEvents;
 
   const integrationStatus = {
     hubspot: true,
@@ -520,6 +748,7 @@ export async function getRevOpsAnalysis(limit = 10) {
     calendar: calendarResult.success,
   };
 
+  // Step 5: Analyze each deal.
   const analyses = enrichedDeals.map((item) => {
     const companyName =
       valueOf(item.company, "name") ||
@@ -527,45 +756,43 @@ export async function getRevOpsAnalysis(limit = 10) {
       valueOf(item.deal, "company") ||
       "";
 
-   const enrichedDeal = {
-  ...item.deal,
-  company: companyName,
+    const enrichedDeal = {
+      ...item.deal,
+      company: companyName,
 
-  // Use the actual associated HubSpot company ID.
-  companyId: item.company?.id
-    ? String(item.company.id)
-    : null,
+      companyId: item.company?.id
+        ? String(item.company.id)
+        : null,
 
-  associatedContacts: item.contacts ?? [],
+      associatedContacts: item.contacts ?? [],
 
-  properties: {
-    ...(item.deal?.properties ?? {}),
-    associatedcompanyname: companyName,
-  },
-};
+      properties: {
+        ...(item.deal?.properties ?? {}),
+        associatedcompanyname: companyName,
+      },
+    };
 
-    const analysis = analyzeDeal(
-      enrichedDeal,
-      companies,
-      contacts,
-      emails,
-      events,
-      integrationStatus
-    );
+    return {
+      ...analyzeDeal(
+        enrichedDeal,
+        companies,
+        contacts,
+        emails,
+        events,
+        integrationStatus
+      ),
 
-   return {
-  ...analysis,
-  companyId: item.company?.id
-    ? String(item.company.id)
-    : null,
-  associationErrors: item.associationErrors ?? [],
-};
+      companyId: item.company?.id
+        ? String(item.company.id)
+        : null,
+
+      associationErrors: item.associationErrors ?? [],
+    };
   });
 
-  analyses.sort(
-    (a, b) => b.riskScore - a.riskScore
-  );
+  analyses.sort((a, b) => b.riskScore - a.riskScore);
 
+  // Step 6: Return the unified analysis.
   return {
     success: true,
     generatedAt: new Date().toISOString(),
@@ -574,12 +801,18 @@ export async function getRevOpsAnalysis(limit = 10) {
 
     dataSources: {
       hubspot: "live",
-      gmail: DEMO_MODE
-        ? "live + synthetic demo data"
-        : "live",
-      calendar: DEMO_MODE
-        ? "live + synthetic demo data"
-        : "live",
+
+      gmail: !gmailResult.success
+        ? "unavailable"
+        : DEMO_MODE
+          ? "live + synthetic demo data"
+          : "live",
+
+      calendar: !calendarResult.success
+        ? "unavailable"
+        : DEMO_MODE
+          ? "live + synthetic demo data"
+          : "live",
     },
 
     summary: {
@@ -587,11 +820,14 @@ export async function getRevOpsAnalysis(limit = 10) {
       contacts: contacts.length,
       deals: deals.length,
 
-      // These totals include synthetic records in demo mode.
       emailsRetrieved: emails.length,
       calendarEventsRetrieved: events.length,
 
+      liveEmails: liveEmails.length,
+      liveCalendarEvents: liveEvents.length,
+
       demoEmails: DEMO_MODE ? mockEmails.length : 0,
+
       demoCalendarEvents: DEMO_MODE
         ? mockCalendarEvents.length
         : 0,

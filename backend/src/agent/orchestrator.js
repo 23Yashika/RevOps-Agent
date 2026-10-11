@@ -1,21 +1,10 @@
+
 import { getRevOpsAnalysis } from "../services/analysisService.js";
 import { generateDealInsights } from "../services/aiService.js";
 import { getPostHogUsageSignals } from "../services/posthogService.js";
+import { getCalendarSignals } from "../services/calendar.service.js";
 import { scoreDeal } from "../services/scoring.service.js";
 import { persistAnalysis } from "../services/analysisPersistence.service.js";
-
-/**
- * Run the RevOps analysis pipeline.
- *
- * 1. Collect CRM, email and calendar evidence.
- * 2. Retrieve PostHog usage signals.
- * 3. Match usage to each deal's associated HubSpot company.
- * 4. Calculate risk scores.
- * 5. Generate AI insights.
- * 6. Persist analysis and proposed actions.
- *
- * External actions are not executed here.
- */
 
 function getCompanySpecificUsage(productUsage, companyId) {
   if (!productUsage?.available || !companyId) {
@@ -78,17 +67,45 @@ export async function runRevOpsAgent({ limit = 10 } = {}) {
 
   console.log("RevOps agent started.");
 
-  // Step 1: Retrieve CRM, email and calendar analysis.
+  // Step 1: Retrieve HubSpot CRM analysis.
   const analysis = await getRevOpsAnalysis(safeLimit);
 
   if (!Array.isArray(analysis.deals)) {
-    throw new Error("RevOps analysis did not return a deals array.");
+    throw new Error(
+      "RevOps analysis did not return a deals array."
+    );
   }
 
-  // Step 2: Retrieve project-wide PostHog usage.
+  // Step 2: Retrieve PostHog usage signals.
   const productUsage = await getPostHogUsageSignals();
 
-  // Step 3: Score each deal using only its company's usage.
+  // Step 3: Retrieve Google Calendar events.
+  // Calendar failure should not stop the CRM analysis.
+  let calendarEvents = [];
+  let calendarAvailable = false;
+  let calendarError = null;
+
+  try {
+    calendarEvents = await getCalendarSignals({
+      maxResults: 100,
+    });
+
+    calendarAvailable = true;
+
+    console.log("Google Calendar signals retrieved.", {
+      eventCount: calendarEvents.length,
+    });
+  } catch (error) {
+    calendarError =
+      error.message || "Unknown Google Calendar error";
+
+    console.error(
+      "Google Calendar signals could not be retrieved:",
+      calendarError
+    );
+  }
+
+  // Step 4: Score each deal using its company's PostHog usage.
   const deals = await Promise.all(
     analysis.deals.map(async (deal) => {
       const companyId = deal.companyId
@@ -143,7 +160,9 @@ export async function runRevOpsAgent({ limit = 10 } = {}) {
     })
   );
 
-  // Step 4: Assemble the unified analysis result.
+  // Step 5: Assemble the unified analysis result.
+  // Calendar events are exposed separately until reliable
+  // deal-to-event matching is implemented.
   const successfulDeals = deals.filter(
     (deal) => deal.aiStatus === "success"
   ).length;
@@ -153,25 +172,42 @@ export async function runRevOpsAgent({ limit = 10 } = {}) {
   const result = {
     ...analysis,
     generatedAt: new Date().toISOString(),
+
     productUsage,
+
+    calendar: {
+      available: calendarAvailable,
+      eventCount: calendarEvents.length,
+      events: calendarEvents,
+      error: calendarError,
+    },
 
     integrations: {
       ...analysis.integrations,
-      posthog: productUsage.available,
+      posthog: Boolean(productUsage.available),
+      calendar: calendarAvailable,
     },
 
     dataSources: {
       ...analysis.dataSources,
+
       posthog: !productUsage.available
         ? "unavailable"
         : productUsage.hasData
+          ? "live"
+          : "connected, no events",
+
+      calendar: !calendarAvailable
+        ? "unavailable"
+        : calendarEvents.length
           ? "live"
           : "connected, no events",
     },
 
     ai: {
       provider: "Groq",
-      model: process.env.GROQ_MODEL || "openai/gpt-oss-120b",
+      model:
+        process.env.GROQ_MODEL || "openai/gpt-oss-120b",
       configured: Boolean(process.env.GROQ_API_KEY),
       successfulDeals,
       failedDeals,
@@ -180,27 +216,35 @@ export async function runRevOpsAgent({ limit = 10 } = {}) {
     deals,
   };
 
-  // Step 5: Persist analysis and proposed actions.
+  // Step 6: Persist analysis and proposed actions.
+  // No email or calendar action is executed here.
   const persistence = await persistAnalysis(result);
 
   console.log("RevOps agent completed.", {
     dealsAnalyzed: deals.length,
     successfulDeals,
     failedDeals,
+    calendarEvents: calendarEvents.length,
+    calendarAvailable,
     proposedActions: persistence.proposedActions.length,
   });
 
   return {
     ...result,
+
     persistence: {
       analysisRunId: persistence.analysisRun.id,
-      proposedActionsCreated: persistence.proposedActions.length,
-      proposedActions: persistence.proposedActions.map((action) => ({
-        id: action.id,
-        accountName: action.accountName,
-        type: action.type,
-        status: action.status,
-      })),
+      proposedActionsCreated:
+        persistence.proposedActions.length,
+
+      proposedActions: persistence.proposedActions.map(
+        (action) => ({
+          id: action.id,
+          accountName: action.accountName,
+          type: action.type,
+          status: action.status,
+        })
+      ),
     },
   };
 }

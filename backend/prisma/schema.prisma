@@ -27,6 +27,7 @@ model ProposedAction {
   rationale     String
   evidenceIds   Json
   status        ActionStatus @default(PENDING)
+  idempotencyKey String? @unique
   approver      String?
   approvalNote  String?
   approvedAt    DateTime?
@@ -68,6 +69,8 @@ enum ActionStatus {
 enum ActionType {
   NOTIFY_OWNER
   DRAFT_EMAIL
+  SEND_EMAIL
+  SCHEDULE_MEETING
   CREATE_TASK
   UPDATE_CRM
 }
