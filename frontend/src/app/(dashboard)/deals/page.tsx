@@ -12,25 +12,25 @@ import { LoadingSkeleton } from "@/components/shared/LoadingSkeleton";
 
 export default function DealsPage() {
   const [mounted, setMounted] = useState(false);
-const { toast } = useToast();
-const [isRefreshing, setIsRefreshing] = useState(false);
-const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+  const { toast } = useToast();
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
   useEffect(() => {
     setMounted(true);
   }, []);
-const handleRefresh = async () => {
-  setIsRefreshing(true);
-  try {
-    await refetch?.();
-    setLastUpdated(new Date());
-    toast('Data refreshed successfully', undefined, 'success');
-  } catch (err) {
-    toast('Refresh failed', (err as any)?.message, 'error');
-  } finally {
-    setIsRefreshing(false);
-  }
-};
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    try {
+      await refetch?.();
+      setLastUpdated(new Date());
+      toast('Data refreshed successfully', undefined, 'success');
+    } catch (err) {
+      toast('Refresh failed', (err as any)?.message, 'error');
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
   const {
     deals,
     totalCount,
@@ -153,7 +153,7 @@ const handleRefresh = async () => {
             totalCount > 0 ? (
               <button
                 onClick={handleResetFilters}
-                className="px-4 py-2 bg-dark-brown-600 text-white text-xs font-semibold rounded-xl hover:bg-dark-brown-700 transition-colors cursor-pointer"
+                className="px-4 py-2 bg-dark-purple-600 text-white text-xs font-semibold rounded-xl hover:bg-dark-purple-700 transition-colors cursor-pointer"
               >
                 Reset Filters
               </button>

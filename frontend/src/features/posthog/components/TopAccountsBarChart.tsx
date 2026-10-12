@@ -1,10 +1,16 @@
 import React from "react";
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
 import type { PostHogSignal } from "../hooks/usePostHogData";
+import {
+  PieChart,
+  Pie,
+  Cell,
+  Tooltip,
+  ResponsiveContainer,
+  Legend,
+} from "recharts";
 
-/**
- * Bar chart showing top accounts by high risk severity.
- */
+const COLORS = ['#EF4444', '#F59E0B', '#10B981', '#3B82F6', '#8B5CF6'];
+
 export function TopAccountsBarChart({ signals }: { signals: PostHogSignal[] }) {
   const counts: Record<string, number> = {};
   signals.forEach((s) => {
@@ -16,18 +22,33 @@ export function TopAccountsBarChart({ signals }: { signals: PostHogSignal[] }) {
     .map(([account, value]) => ({ account, value }))
     .sort((a, b) => b.value - a.value)
     .slice(0, 5);
+
   return (
     <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs hover:shadow-lg transition-shadow">
       <h3 className="text-sm font-semibold text-slate-700 mb-2">Top Accounts by Risk</h3>
       <ResponsiveContainer width="100%" height={250}>
-        <BarChart data={data} layout="vertical" margin={{ top: 5, right: 20, left: 60, bottom: 5 }}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis type="number" />
-          <YAxis dataKey="account" type="category" width={100} />
+        <PieChart>
+          <Pie
+            data={data}
+            dataKey="value"
+            nameKey="account"
+            cx="50%"
+            cy="50%"
+            outerRadius={80}
+            label
+          >
+            {data.map((entry, index) => (
+              <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+            ))}
+          </Pie>
           <Tooltip />
-          <Bar dataKey="value" fill="#EF4444" />
-        </BarChart>
+          <Legend />
+        </PieChart>
       </ResponsiveContainer>
     </div>
   );
 }
+
+
+
+

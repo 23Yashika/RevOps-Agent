@@ -8,16 +8,16 @@ import { usePostHogData } from "@/features/posthog/hooks/usePostHogData";
 import { PostHogKpis } from "@/features/posthog/components/PostHogKpis";
 import { UsageTrendsChart } from "@/features/posthog/components/UsageTrendsChart";
 import { TopSignals } from "@/features/posthog/components/TopSignals";
-import { RiskDistributionOverview } from "@/features/posthog/components/RiskDistributionOverview";
+// import { RiskDistributionOverview } from "@/features/posthog/components/RiskDistributionOverview";
 // Replace RiskDistributionDonut import
 // Account Health now uses the same overview component as dashboard
 // Account Health now uses the same overview component as dashboard
 // import { RiskDistributionDonut } from "@/features/posthog/components/RiskDistributionDonut";
 
-import { FeatureAdoptionBarChart } from "@/features/posthog/components/FeatureAdoptionBarChart";
-import { WeeklyActivityHeatmap } from "@/features/posthog/components/WeeklyActivityHeatmap";
-import { UserJourneyFunnel } from "@/features/posthog/components/UserJourneyFunnel";
-import { ArrowRight } from "lucide-react";
+// import { FeatureAdoptionBarChart } from "@/features/posthog/components/FeatureAdoptionBarChart";
+// import { WeeklyActivityHeatmap } from "@/features/posthog/components/WeeklyActivityHeatmap";
+// import { UserJourneyFunnel } from "@/features/posthog/components/UserJourneyFunnel";
+// import { ArrowRight } from "lucide-react";
 
 export default function PostHogPage() {
   const { isConnected, kpis, trendData, signals, isLoading } = usePostHogData();
@@ -59,28 +59,28 @@ export default function PostHogPage() {
       </div>
 
       {/* Feature Adoption by Module – Bar Chart */}
-      <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
+      {/* <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
         <h3 className="text-sm font-bold text-slate-700 mb-2">Feature Adoption by Module</h3>
         <FeatureAdoptionBarChart kpis={kpis} />
-      </div>
+      </div> */}
 
       {/* Account Health – Donut Chart */}
-      <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
+      {/* <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
         <h3 className="text-sm font-bold text-slate-700 mb-2">Account Health</h3>
         <RiskDistributionOverview signals={signals} />
-      </div>
+      </div> */}
 
       {/* Weekly Activity Heatmap */}
-      <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
+      {/* <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
         <h3 className="text-sm font-bold text-slate-700 mb-2">Weekly Activity Heatmap</h3>
         <WeeklyActivityHeatmap data={trendData && trendData.length ? trendData.map((t: PostHogTrendPoint, i: number) => ({ day: `Day ${i+1}`, value: Math.round(t.activeUsers/100) })) : [{ day: "Mon", value: 8 }, { day: "Tue", value: 12 }, { day: "Wed", value: 5 }, { day: "Thu", value: 9 }, { day: "Fri", value: 7 }, { day: "Sat", value: 3 }, { day: "Sun", value: 4 }]} />
-      </div>
+      </div> */}
 
       {/* User Journey Funnel */}
-      <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
+      {/* <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
         <h3 className="text-sm font-bold text-slate-700 mb-2">User Journey Funnel</h3>
         <UserJourneyFunnel data={trendData && trendData.length ? trendData.map((t: PostHogTrendPoint, i: number) => ({ stage: `Stage ${i+1}`, value: Math.round(t.activeUsers/10) })) : [{ stage: "Acquisition", value: 1500 }, { stage: "Activation", value: 1200 }, { stage: "Retention", value: 900 }, { stage: "Revenue", value: 600 }]} />
-      </div>
+      </div> */}
 
       {/* Top Signals – limited to three cards */}
       <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">

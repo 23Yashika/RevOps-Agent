@@ -23,7 +23,7 @@ export function OverviewTab({ deal, onGoToRecommendations }: OverviewTabProps) {
         <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
           <div className="flex items-center justify-between text-slate-500">
             <span className="text-xs font-semibold uppercase tracking-wider">Deal Value</span>
-            <IndianRupee className="w-4 h-4 text-dark-brown-600" />
+            <IndianRupee className="w-4 h-4 text-[#6C3BDB]" />
           </div>
           <p className="text-2xl font-bold text-slate-900 mt-2 font-mono">{formattedAmount}</p>
           <p className="text-xs text-slate-400 mt-1">Stage: {deal.stage}</p>
@@ -58,7 +58,7 @@ export function OverviewTab({ deal, onGoToRecommendations }: OverviewTabProps) {
         </div>
       </div>
 
-      
+
 
       {/* Signal Health Checklist */}
       <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs space-y-4">

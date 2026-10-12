@@ -22,7 +22,7 @@ export function RiskDistributionOverview({ signals }: { signals: PostHogSignal[]
     { name: "Low", value: counts.low, percent: ((counts.low / total) * 100).toFixed(1) },
   ];
 
-  const COLORS = ["#EF4444", "#F59E0B", "#10B981"]; // red, amber, green
+  const COLORS = ["#6C3BDB", "#FBBF24", "#60A5FA"]; // high purple, medium amber, low blue
 
   return (
     <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs hover:shadow-lg transition-shadow mt-4">

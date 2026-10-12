@@ -87,14 +87,14 @@ export default function ApprovalsPage() {
               key={tab.id}
               onClick={() => setSelectedTab(tab.id)}
               className={`flex items-center gap-2 px-4 py-2.5 text-xs font-semibold whitespace-nowrap transition-colors border-b-2 cursor-pointer ${active
-                ? "border-dark-brown-600 text-dark-brown-600 font-bold"
+                ? "border-dark-purple-600 text-[#6C3BDB] font-bold"
                 : "border-transparent text-slate-500 hover:text-slate-800"
                 }`}
             >
               <span>{tab.label}</span>
               <span
                 className={`px-2 py-0.5 rounded-full text-[11px] font-bold ${active
-                  ? "bg-dark-brown-50 text-dark-brown-700"
+                  ? "bg-pageBg text-dark-purple-700"
                   : "bg-slate-100 text-slate-600"
                   }`}
               >

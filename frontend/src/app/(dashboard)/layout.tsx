@@ -12,7 +12,7 @@ export default function DashboardLayout({
 
   return (
     <div
-      className="min-h-screen bg-[#F0E8DC] flex"
+      className="min-h-screen bg-[#FFFFFF] flex"
       style={
         {
           "--sidebar-width": collapsed ? "76px" : "256px",

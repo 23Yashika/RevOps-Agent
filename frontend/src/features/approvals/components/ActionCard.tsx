@@ -45,13 +45,13 @@ export function ActionCard({
       {/* Top Meta Row */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#6F5038] to-[#5A4330] text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-sm">
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#5929C4] to-[#6C3BDB] text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-sm">
             <ShieldCheck className="w-5 h-5" />
           </div>
           <div>
             <div className="flex items-center gap-2">
               <h3 className="text-sm font-bold text-slate-900">{action.accountName}</h3>
-              <span className="font-mono text-[11px] font-semibold text-[#30241D] bg-[#F0E8DC] px-2 py-0.5 rounded-md">
+              <span className="font-mono text-[11px] font-semibold text-[#171525] bg-[#FFFFFF] px-2 py-0.5 rounded-md">
                 {action.type}
               </span>
             </div>

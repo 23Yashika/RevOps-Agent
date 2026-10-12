@@ -5,7 +5,8 @@ import Link from "next/link";
 import { ArrowRight, Building } from "lucide-react";
 import { RiskBadge } from "@/components/shared/RiskBadge";
 import type { DealAnalysis } from "@/types";
-import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip } from "recharts";
+
+
 interface TopAccountsByRiskProps {
   deals: DealAnalysis[];
 }
@@ -22,23 +23,24 @@ export function TopAccountsByRisk({ deals }: TopAccountsByRiskProps) {
         </div>
         <Link
           href="/deals"
-          className="text-xs font-semibold text-dark-brown-600 hover:text-dark-brown-700 flex items-center gap-1"
+          className="text-xs font-semibold text-[#6C3BDB] hover:text-dark-purple-700 flex items-center gap-1"
         >
           <span>View all</span>
           <ArrowRight className="w-3 h-3" />
         </Link>
       </div>
-      {/* Risk Score Bar Chart */}
-      <div className="mb-4">
-        <ResponsiveContainer width="100%" height={150}>
-          <BarChart data={sortedDeals} margin={{ top: 5, right: 5, left: 5, bottom: 5 }}>
-            <XAxis dataKey="company" hide />
-            <YAxis hide />
-            <Tooltip formatter={(value: number) => `${value}`} />
-            <Bar dataKey="riskScore" fill="#EF4444" radius={[4,4,0,0]} />
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
 
       <div className="flex-1 divide-y divide-slate-100 py-2">
         {sortedDeals.length > 0 ? (
@@ -67,7 +69,7 @@ export function TopAccountsByRisk({ deals }: TopAccountsByRiskProps) {
                   <RiskBadge level={deal.riskLevel} score={deal.riskScore} />
                   <Link
                     href={`/intelligence/${dealId}`}
-                    className="p-1 rounded-md text-slate-400 hover:text-[#5A4330] hover:bg-[#F0E8DC] transition-colors"
+                    className="p-1 rounded-md text-slate-400 hover:text-[#6C3BDB] hover:bg-[#FFFFFF] transition-colors"
                     title="View Deal Intelligence"
                   >
                     <ArrowRight className="w-3.5 h-3.5" />

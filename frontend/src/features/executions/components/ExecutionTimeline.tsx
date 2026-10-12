@@ -53,7 +53,7 @@ export function ExecutionTimeline({ action, onViewLogs }: ExecutionTimelineProps
 
           <button
             onClick={() => onViewLogs(action)}
-            className="text-xs font-semibold text-dark-brown-600 hover:text-dark-brown-700"
+            className="text-xs font-semibold text-[#6C3BDB] hover:text-dark-purple-700"
           >
             View Logs
           </button>
@@ -64,8 +64,8 @@ export function ExecutionTimeline({ action, onViewLogs }: ExecutionTimelineProps
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-2">
         {/* Step 1: Proposed */}
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-dark-brown-50 text-dark-brown-600 flex items-center justify-center shrink-0">
-            <CheckCircle2 className="w-5 h-5 text-dark-brown-600" />
+          <div className="w-9 h-9 rounded-xl bg-pageBg text-[#6C3BDB] flex items-center justify-center shrink-0">
+            <CheckCircle2 className="w-5 h-5 text-[#6C3BDB]" />
           </div>
           <div>
             <p className="text-xs font-bold text-slate-900">Proposed</p>
@@ -79,8 +79,8 @@ export function ExecutionTimeline({ action, onViewLogs }: ExecutionTimelineProps
         <div className="flex items-center gap-3">
           <div
             className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${isApproved
-                ? "bg-dark-brown-50 text-dark-brown-600"
-                : "bg-slate-100 text-slate-400"
+              ? "bg-pageBg text-[#6C3BDB]"
+              : "bg-slate-100 text-slate-400"
               }`}
           >
             <CheckCircle2 className="w-5 h-5" />
@@ -97,8 +97,8 @@ export function ExecutionTimeline({ action, onViewLogs }: ExecutionTimelineProps
         <div className="flex items-center gap-3">
           <div
             className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${isExecuting
-                ? "bg-indigo-50 text-indigo-600"
-                : "bg-slate-100 text-slate-400"
+              ? "bg-indigo-50 text-indigo-600"
+              : "bg-slate-100 text-slate-400"
               }`}
           >
             <Play className="w-4 h-4" />
@@ -115,8 +115,8 @@ export function ExecutionTimeline({ action, onViewLogs }: ExecutionTimelineProps
         <div className="flex items-center gap-3">
           <div
             className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${isExecuted
-                ? "bg-emerald-50 text-emerald-600"
-                : "bg-slate-100 text-slate-400"
+              ? "bg-emerald-50 text-emerald-600"
+              : "bg-slate-100 text-slate-400"
               }`}
           >
             <CheckCircle2 className="w-5 h-5" />

@@ -25,7 +25,7 @@ export function IntelligenceHeader({ deal }: IntelligenceHeaderProps) {
       {/* Main Deal Header Bar */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pt-1">
         <div className="flex items-start gap-3.5">
-          <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-dark-brown-600 to-indigo-600 text-white flex items-center justify-center font-bold text-base shrink-0 shadow-md shadow-dark-brown-500/20">
+          <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-dark-purple-600 to-indigo-600 text-white flex items-center justify-center font-bold text-base shrink-0 shadow-md shadow-dark-purple-500/20">
             <Building className="w-5 h-5" />
           </div>
           <div>

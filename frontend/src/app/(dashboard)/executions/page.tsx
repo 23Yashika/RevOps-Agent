@@ -138,7 +138,7 @@ export default function ExecutionsPage() {
             totalCount > 0 ? (
               <button
                 onClick={handleResetFilters}
-                className="px-4 py-2 bg-[#5A4330] text-white text-xs font-semibold rounded-xl hover:bg-[#30241D] transition-colors cursor-pointer"
+                className="px-4 py-2 bg-[#6C3BDB] text-white text-xs font-semibold rounded-xl hover:bg-[#171525] transition-colors cursor-pointer"
               >
                 Reset Filters
               </button>
