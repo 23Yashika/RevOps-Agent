@@ -94,7 +94,7 @@ export function RecommendationsTab({ deal }: RecommendationsTabProps) {
       <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs space-y-5">
         <div className="flex items-center justify-between pb-3 border-b border-slate-100">
           <div className="flex items-center gap-2.5">
-            <div className="p-2 rounded-xl bg-dark-brown-50 text-dark-brown-600">
+            <div className="p-2 rounded-xl bg-pageBg text-[#6C3BDB]">
               <ShieldCheck className="w-5 h-5" />
             </div>
             <div>
@@ -129,47 +129,11 @@ export function RecommendationsTab({ deal }: RecommendationsTabProps) {
           </div>
         </div>
 
-        {/* Proposed Revenue Actions Overview */}
-        <div className="p-4 bg-slate-50/80 border border-slate-200/80 rounded-xl space-y-2.5">
-          <h4 className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
-            Prepared Revenue Actions
-          </h4>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-            <div className="flex items-start gap-2.5 bg-white p-3 rounded-lg border border-slate-200/60 shadow-2xs">
-              <div className="p-1.5 rounded-lg bg-blue-50 text-blue-600 mt-0.5 shrink-0">
-                <Mail className="w-4 h-4" />
-              </div>
-              <div>
-                <span className="font-bold text-slate-900 block">Follow-up Client Email</span>
-                <span className="text-slate-500 text-[11px]">
-                  Draft prepared for {clientEmail}. Review and confirm send in Approval Center.
-                </span>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-2.5 bg-white p-3 rounded-lg border border-slate-200/60 shadow-2xs">
-              <div className="p-1.5 rounded-lg bg-amber-50 text-amber-600 mt-0.5 shrink-0">
-                <UserCheck className="w-4 h-4" />
-              </div>
-              <div>
-                <span className="font-bold text-slate-900 block">Notify Account Owner</span>
-                <span className="text-slate-500 text-[11px]">
-                  Internal alignment on stalled proposal timeline.
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Single Main Action Button: View Recommended Actions -> Redirect to Approval Center */}
-        <div className="pt-2 border-t border-slate-100 flex items-center justify-between">
-          <p className="text-xs text-slate-500 font-medium">
-            Review and approve the proposed actions in the Approval Center.
-          </p>
-
+        {/* Action Button */}
+        <div className="pt-2 mt-2 mb-2 flex items-center bg-white justify-end">
           <Link
-            href={`/approvals?account=${encodeURIComponent(accountName)}`}
-            className="inline-flex text-white items-center bg-[#5A4330] hover:bg-[#30241D] gap-2 px-5 py-2.5 rounded-xl text-xs font-semibold shadow-md shadow-dark-brown-500/20 transition-all cursor-pointer"
+            href="/approvals"
+            className="inline-flex text-white items-center bg-[#6C3BDB] hover:bg-[#171525] gap-2 px-5 py-2.5  rounded-xl text-xs font-semibold shadow-md shadow-dark-purple-500/20 transition-all cursor-pointer"
           >
             <span>View Recommended Actions</span>
             <ArrowRight className="w-4 h-4" />

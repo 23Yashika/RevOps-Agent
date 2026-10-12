@@ -10,25 +10,35 @@ const config: Config = {
     extend: {
       colors: {
         // Premium UI palette
-        pageBg: "#F6F2EB",
-        cardBg: "#FFFDFA",
-        lightSurface: "#EEE5D8",
-        sidebarBg: "#E8DDCC",
-        sidebarDarkBg: "#33271F",
-        primaryDarkBrown: "#4A3728",
-        espressoBrown: "#30241D",
-        primaryAction: "#6F5038",
-        buttonHover: "#503925",
-        champagneGold: "#B89562",
-        activeNavBg: "#D8C5AB",
-        textPrimary: "#302820",
-        textSecondary: "#75695C",
-        textMuted: "#9B9083",
-        borderColor: "#DED3C4",
-        hoverBg: "#F0E7DB",
-        success: "#477653",
-        warning: "#B77C28",
-        danger: "#A64E45",
+        
+// White + Purple Theme
+pageBg: "#FFFFFF",
+cardBg: "#FFFFFF",
+lightSurface: "#F5F0FF",
+sidebarBg: "#FFFFFF",
+sidebarDarkBg: "#FFFFFF",
+
+
+espressoBrown: "#171525",
+
+primaryDarkBrown: "#6C3BDB",
+primaryAction: "#6C3BDB",
+buttonHover: "#5425B5",
+
+champagneGold: "#B89562",
+activeNavBg: "#F0E9FF",
+
+textPrimary: "#241B35",
+textSecondary: "#6B6478",
+textMuted: "#9991A5",
+
+borderColor: "#E8E2F0",
+hoverBg: "#F5F0FF",
+
+success: "#477653",
+warning: "#B77C28",
+danger: "#A64E45",
+
         // Preserve existing brand and risk definitions
         brand: {
           50: "#EFF6FF",

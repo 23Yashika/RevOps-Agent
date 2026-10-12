@@ -43,7 +43,7 @@ export function DealsFilters({
           value={searchQuery}
           onChange={(e) => onSearchChange(e.target.value)}
           placeholder="Search accounts, deals, or companies..."
-          className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-dark-brown-500/20 focus:border-dark-brown-500 transition-all"
+          className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-dark-purple-500/20 focus:border-dark-purple-500 transition-all"
         />
         {searchQuery && (
           <button
@@ -59,7 +59,7 @@ export function DealsFilters({
         <select
           value={selectedRisk}
           onChange={(e) => onRiskChange(e.target.value)}
-          className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-dark-brown-500/20 focus:border-dark-brown-500"
+          className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-dark-purple-500/20 focus:border-dark-purple-500"
         >
           <option value="ALL">All Risk Levels</option>
           <option value="HIGH">High Risk</option>
@@ -70,7 +70,7 @@ export function DealsFilters({
         <select
           value={selectedStage}
           onChange={(e) => onStageChange(e.target.value)}
-          className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-dark-brown-500/20 focus:border-dark-brown-500"
+          className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-dark-purple-500/20 focus:border-dark-purple-500"
         >
           <option value="ALL">All Stages</option>
           {stages.map((stage) => (
@@ -83,7 +83,7 @@ export function DealsFilters({
         <select
           value={selectedCoverage}
           onChange={(e) => onCoverageChange(e.target.value)}
-          className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-dark-brown-500/20 focus:border-dark-brown-500"
+          className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-dark-purple-500/20 focus:border-dark-purple-500"
         >
           <option value="ALL">All Coverage</option>
           <option value="FULL">Full Coverage (3/3)</option>

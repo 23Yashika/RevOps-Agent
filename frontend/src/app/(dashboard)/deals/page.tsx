@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { Header } from "@/components/layout/Header";
 import { RefreshCw, AlertCircle } from "lucide-react";
+import { useToast } from "@/providers/toast-provider";
 import { useDealsData } from "@/features/deals/hooks/useDealsData";
 import { DealsFilters } from "@/features/deals/components/DealsFilters";
 import { DealsTable } from "@/features/deals/components/DealsTable";
@@ -11,11 +12,25 @@ import { LoadingSkeleton } from "@/components/shared/LoadingSkeleton";
 
 export default function DealsPage() {
   const [mounted, setMounted] = useState(false);
+  const { toast } = useToast();
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
   useEffect(() => {
     setMounted(true);
   }, []);
-
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    try {
+      await refetch?.();
+      setLastUpdated(new Date());
+      toast('Data refreshed successfully', undefined, 'success');
+    } catch (err) {
+      toast('Refresh failed', (err as any)?.message, 'error');
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
   const {
     deals,
     totalCount,
@@ -68,11 +83,17 @@ export default function DealsPage() {
         subtitle="Browse and manage all accounts and deals with real-time risk scores and filters."
         action={
           <button
-            onClick={() => refetch()}
-            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white border border-slate-200 text-slate-700 text-xs font-semibold hover:bg-slate-50 shadow-xs transition-colors cursor-pointer"
+            onClick={handleRefresh}
+            disabled={isRefreshing}
+            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white border border-slate-200 text-slate-700 text-xs font-semibold hover:bg-slate-50 shadow-xs transition-colors cursor-pointer disabled:opacity-50"
           >
-            <RefreshCw className="w-3.5 h-3.5 text-slate-500" />
-            <span>Refresh</span>
+            <RefreshCw className={`w-3.5 h-3.5 text-slate-500 ${isRefreshing ? 'animate-spin' : ''}`} />
+            <span>{isRefreshing ? 'Refreshing...' : 'Refresh'}</span>
+            {lastUpdated && (
+              <span className="text-xs text-slate-500 ml-2">
+                Last updated: {lastUpdated.toLocaleTimeString()}
+              </span>
+            )}
           </button>
         }
       />
@@ -132,7 +153,7 @@ export default function DealsPage() {
             totalCount > 0 ? (
               <button
                 onClick={handleResetFilters}
-                className="px-4 py-2 bg-dark-brown-600 text-white text-xs font-semibold rounded-xl hover:bg-dark-brown-700 transition-colors cursor-pointer"
+                className="px-4 py-2 bg-dark-purple-600 text-white text-xs font-semibold rounded-xl hover:bg-dark-purple-700 transition-colors cursor-pointer"
               >
                 Reset Filters
               </button>

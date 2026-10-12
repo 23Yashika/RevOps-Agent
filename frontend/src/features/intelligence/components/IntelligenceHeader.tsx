@@ -1,8 +1,8 @@
 "use client";
 
 import React from "react";
-import Link from "next/link";
-import { ArrowLeft, Building, DollarSign, Calendar, Sparkles } from "lucide-react";
+import { Building } from "lucide-react";
+// Import icons without back button related icons
 import { RiskBadge } from "@/components/shared/RiskBadge";
 import { DataCoverageBadge } from "@/features/deals/components/DataCoverageBadge";
 import type { DealAnalysis } from "@/types";
@@ -14,27 +14,18 @@ interface IntelligenceHeaderProps {
 export function IntelligenceHeader({ deal }: IntelligenceHeaderProps) {
   const formattedAmount = new Intl.NumberFormat("en-US", {
     style: "currency",
-    currency: "USD",
+    currency: "INR",
     maximumFractionDigits: 0,
   }).format(deal.amount);
 
   return (
     <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs space-y-4">
-      {/* Back Button */}
-      <div>
-        <Link
-          href="/deals"
-          className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-dark-brown-600 transition-colors"
-        >
-          <ArrowLeft className="w-3.5 h-3.5" />
-          <span>Back to Deals</span>
-        </Link>
-      </div>
+
 
       {/* Main Deal Header Bar */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pt-1">
         <div className="flex items-start gap-3.5">
-          <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-dark-brown-600 to-indigo-600 text-white flex items-center justify-center font-bold text-base shrink-0 shadow-md shadow-dark-brown-500/20">
+          <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-dark-purple-600 to-indigo-600 text-white flex items-center justify-center font-bold text-base shrink-0 shadow-md shadow-dark-purple-500/20">
             <Building className="w-5 h-5" />
           </div>
           <div>

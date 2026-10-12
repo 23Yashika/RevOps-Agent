@@ -2,6 +2,8 @@
 
 import React from "react";
 import { Sparkles, CheckCircle2, RefreshCw } from "lucide-react";
+import { ResponsiveContainer, LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip } from "recharts";
+import { CHART_COLORS } from "@/components/charts/ChartTheme";
 import type { ProposedAction } from "@/types";
 
 interface RecentActivityProps {
@@ -19,6 +21,13 @@ export function RecentActivity({
 }: RecentActivityProps) {
   const approvedAction = actions.find((a) => a.status === "APPROVED");
 
+  // Compute counts of actions by type for chart
+  const actionCounts = actions.reduce((acc, a) => {
+    acc[a.type] = (acc[a.type] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>);
+  const actionData = Object.entries(actionCounts).map(([type, count]) => ({ type, count }));
+
   return (
     <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs flex flex-col h-full">
       <div className="flex items-center justify-between pb-4 border-b border-slate-100">
@@ -27,11 +36,24 @@ export function RecentActivity({
           <p className="text-xs text-slate-500">Latest pipeline and system events</p>
         </div>
       </div>
+      {/* Activity Chart */}
+      <div className="mb-4">
+        <h4 className="text-sm font-medium text-slate-700 mb-2">Activity Overview</h4>
+        <ResponsiveContainer width="100%" height={120}>
+          <LineChart data={actionData} margin={{ top: 5, right: 5, left: 5, bottom: 5 }}>
+            <CartesianGrid stroke={CHART_COLORS.grid} strokeDasharray="3 3" />
+            <XAxis dataKey="type" axisLine={false} tickLine={false} tick={{ fill: CHART_COLORS.label, fontSize: 12 }} />
+            <YAxis hide />
+            <Tooltip formatter={(value: number) => `${value} actions`} />
+            <Line type="monotone" dataKey="count" stroke={CHART_COLORS.primary} strokeWidth={2} dot={false} />
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
 
       <div className="flex-1 divide-y divide-slate-100 py-2">
         {/* Activity Item 1: Analysis Run */}
         <div className="py-3 flex items-start gap-3">
-          <div className="w-7 h-7 rounded-lg bg-dark-brown-50 text-dark-brown-600 flex items-center justify-center shrink-0 mt-0.5">
+          <div className="w-7 h-7 rounded-lg bg-pageBg text-[#6C3BDB] flex items-center justify-center shrink-0 mt-0.5">
             <Sparkles className="w-3.5 h-3.5" />
           </div>
           <div className="flex-1 min-w-0">

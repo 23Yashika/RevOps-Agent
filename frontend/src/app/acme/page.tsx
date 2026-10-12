@@ -14,7 +14,7 @@ export default function AcmeDemoPage() {
       <Header title={headerTitle} subtitle={headerSubtitle} />
       {/* Placeholder content */}
       <section className="p-6 bg-cardBg rounded-2xl shadow-xs">
-        <h2 className="text-lg font-semibold text-espressoBrown mb-2">
+        <h2 className="text-lg font-semibold text-primaryDarkBrown mb-2">
           Welcome to the Acme Demo
         </h2>
         <p className="text-sm text-textSecondary">

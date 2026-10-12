@@ -12,10 +12,10 @@ interface HeaderProps {
 
 export function Header({ title, subtitle, action, lastAnalysisAt }: HeaderProps) {
   return (
-    <header className="bg-sidebarDarkBg border-b border-borderColor px-6 py-5 flex flex-col md:flex-row md:items-center justify-between gap-4 sticky top-0 z-20 shadow-xs">
+    <header className="bg-sidebarDarkBg border-2 border-[#5929C4] px-6 py-5 flex flex-col md:flex-row md:items-center justify-between gap-4 sticky top-0 z-20 shadow-xs">
       <div>
-        <h1 className="text-xl font-bold text-cardBg tracking-tight">{title}</h1>
-        {subtitle && <p className="text-xs text-cardBg mt-0.5">{subtitle}</p>}
+        <h1 className="text-xl font-bold text-black tracking-tight">{title}</h1>
+        {subtitle && <p className="text-xs text-black mt-0.5">{subtitle}</p>}
       </div>
 
       <div className="flex items-center gap-3">

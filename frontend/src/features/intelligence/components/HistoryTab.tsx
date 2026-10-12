@@ -30,7 +30,7 @@ export function HistoryTab({ analysisRunId, generatedAt, aiModel }: HistoryTabPr
 
         <div className="divide-y divide-slate-100">
           <div className="py-4 flex items-start gap-3.5">
-            <div className="w-8 h-8 rounded-xl bg-dark-brown-50 text-dark-brown-600 flex items-center justify-center shrink-0 mt-0.5">
+            <div className="w-8 h-8 rounded-xl bg-pageBg text-[#6C3BDB] flex items-center justify-center shrink-0 mt-0.5">
               <Clock className="w-4 h-4" />
             </div>
             <div className="flex-1">

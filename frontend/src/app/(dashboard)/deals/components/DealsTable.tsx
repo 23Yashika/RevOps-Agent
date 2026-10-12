@@ -19,7 +19,7 @@ export function DealsTable({ deals, sortField, sortOrder, onSort }: DealsTablePr
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
-      currency: "USD",
+      currency: "INR",
       maximumFractionDigits: 0,
     }).format(amount);
   };
@@ -87,11 +87,11 @@ export function DealsTable({ deals, sortField, sortOrder, onSort }: DealsTablePr
                   {/* Company / Deal */}
                   <td className="py-4 px-5">
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-xl bg-dark-brown-50 text-dark-brown-600 flex items-center justify-center shrink-0 border border-dark-brown-100/60 font-semibold text-xs">
+                      <div className="w-8 h-8 rounded-xl bg-pageBg text-[#6C3BDB] flex items-center justify-center shrink-0 border border-dark-purple-100/60 font-semibold text-xs">
                         <Building className="w-4 h-4" />
                       </div>
                       <div className="min-w-0">
-                        <p className="font-bold text-slate-900 group-hover:text-dark-brown-600 transition-colors truncate">
+                        <p className="font-bold text-slate-900 group-hover:text-[#6C3BDB] transition-colors truncate">
                           {deal.company || deal.dealName}
                         </p>
                         <p className="text-[11px] text-slate-400 truncate mt-0.5">
@@ -140,7 +140,7 @@ export function DealsTable({ deals, sortField, sortOrder, onSort }: DealsTablePr
                   <td className="py-4 px-5 text-right whitespace-nowrap">
                     <Link
                       href={`/intelligence/${dealId}`}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-dark-brown-600 hover:text-white text-slate-700 text-xs font-semibold transition-all duration-150 shadow-xs cursor-pointer"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-dark-purple-600 hover:text-white text-slate-700 text-xs font-semibold transition-all duration-150 shadow-xs cursor-pointer"
                     >
                       <span>View Details</span>
                       <ChevronRight className="w-3.5 h-3.5" />
