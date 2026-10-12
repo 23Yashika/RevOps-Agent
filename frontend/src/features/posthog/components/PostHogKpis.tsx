@@ -1,8 +1,9 @@
 "use client";
 
 import React from "react";
-import { Users, Zap, TrendingDown, ArrowUpRight } from "lucide-react";
+import { Users, Zap, TrendingDown, ArrowUpRight, Activity } from "lucide-react";
 import { ResponsiveContainer, LineChart, Line } from "recharts";
+import { MiniSparkline } from "./MiniSparkline";
 
 interface PostHogKpisProps {
   kpis: {
@@ -21,7 +22,7 @@ export function PostHogKpis({ kpis }: PostHogKpisProps) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       {/* 1. Active Users */}
-      <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs hover:shadow-lg hover:border-slate-300 transition-colors">
+      <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs hover:border-slate-300 transition-colors">
         <div className="flex items-center justify-between text-slate-500">
           <span className="text-xs font-semibold uppercase tracking-wider">
             Active Users
@@ -90,26 +91,25 @@ export function PostHogKpis({ kpis }: PostHogKpisProps) {
           </p>
         </div>
       </div>
-
-      {/* 4. Top Feature Growth */}
-      {/* <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs hover:border-slate-300 transition-colors">
-        <div className="flex items-center justify-between text-slate-500">
-          <span className="text-xs font-semibold uppercase tracking-wider">
-            Top Feature Growth
-          </span>
-          <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
-            <ArrowUpRight className="w-4 h-4" />
+        {/* 4. Top Feature Growth */}
+        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs hover:border-slate-300 transition-colors">
+          <div className="flex items-center justify-between text-slate-500">
+            <span className="text-xs font-semibold uppercase tracking-wider">
+              Top Feature Growth
+            </span>
+            <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
+              <ArrowUpRight className="w-4 h-4" />
+            </div>
+          </div>
+          <div className="mt-3">
+            <h3 className="text-2xl font-bold text-slate-900 font-mono tracking-tight">
+              {kpis.topFeatureGrowth}
+            </h3>
+            <p className="mt-1 text-xs text-slate-500 font-medium">
+              {kpis.topFeatureName} module
+            </p>
           </div>
         </div>
-        <div className="mt-3">
-          <h3 className="text-2xl font-bold text-slate-900 font-mono tracking-tight">
-            {kpis.topFeatureGrowth}
-          </h3>
-          <p className="mt-1 text-xs text-slate-500 font-medium">
-            {kpis.topFeatureName} module
-          </p>
-        </div>
-      </div> */}
     </div>
   );
 }

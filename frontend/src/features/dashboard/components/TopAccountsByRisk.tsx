@@ -5,7 +5,7 @@ import Link from "next/link";
 import { ArrowRight, Building } from "lucide-react";
 import { RiskBadge } from "@/components/shared/RiskBadge";
 import type { DealAnalysis } from "@/types";
-
+import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip } from "recharts";
 interface TopAccountsByRiskProps {
   deals: DealAnalysis[];
 }
@@ -27,6 +27,17 @@ export function TopAccountsByRisk({ deals }: TopAccountsByRiskProps) {
           <span>View all</span>
           <ArrowRight className="w-3 h-3" />
         </Link>
+      </div>
+      {/* Risk Score Bar Chart */}
+      <div className="mb-4">
+        <ResponsiveContainer width="100%" height={150}>
+          <BarChart data={sortedDeals} margin={{ top: 5, right: 5, left: 5, bottom: 5 }}>
+            <XAxis dataKey="company" hide />
+            <YAxis hide />
+            <Tooltip formatter={(value: number) => `${value}`} />
+            <Bar dataKey="riskScore" fill="#EF4444" radius={[4,4,0,0]} />
+          </BarChart>
+        </ResponsiveContainer>
       </div>
 
       <div className="flex-1 divide-y divide-slate-100 py-2">

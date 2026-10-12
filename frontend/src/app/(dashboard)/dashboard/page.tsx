@@ -6,6 +6,7 @@ import { Sparkles, Loader2 } from "lucide-react";
 import { useDashboardData } from "@/features/dashboard/hooks/useDashboardData";
 import { KpiCards } from "@/features/dashboard/components/KpiCards";
 import { RiskDistributionChart } from "@/features/dashboard/components/RiskDistributionChart";
+import { RiskDistributionOverview } from "@/features/posthog/components/RiskDistributionOverview";
 import { RecentActivity } from "@/features/dashboard/components/RecentActivity";
 import { TopAccountsByRisk } from "@/features/dashboard/components/TopAccountsByRisk";
 import { IntegrationHealthBanner } from "@/features/dashboard/components/IntegrationHealthBanner";
@@ -79,12 +80,15 @@ export default function DashboardPage() {
 
       {/* 3. Analytics Grid (Risk Distribution, Recent Activity, Top Accounts) */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <RiskDistributionChart
-          lowCount={lowRiskCount}
-          mediumCount={mediumRiskCount}
-          highCount={highRiskCount}
-          totalDeals={dealsAnalyzedCount}
-        />
+        {/* Risk Distribution Overview */}
+        {(() => {
+          const riskSignals = [
+            ...Array(highRiskCount).fill({ severity: "high", title: "", description: "" } as any),
+            ...Array(mediumRiskCount).fill({ severity: "medium", title: "", description: "" } as any),
+            ...Array(lowRiskCount).fill({ severity: "low", title: "", description: "" } as any),
+          ];
+          return <RiskDistributionOverview signals={riskSignals} />;
+        })()}
 
         <RecentActivity
           actions={actions}

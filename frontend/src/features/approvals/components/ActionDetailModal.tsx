@@ -15,7 +15,7 @@ export function ActionDetailModal({ action, onClose }: ActionDetailModalProps) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/50 backdrop-blur-xs p-4">
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-xl max-w-xl w-full overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+      <div className="bg-white rounded-2xl border border-slate-200 shadow-xl max-w-sm w-full overflow-hidden animate-in fade-in zoom-in-95 duration-150">
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-slate-50/50">
           <div className="flex items-center gap-2">
@@ -38,7 +38,7 @@ export function ActionDetailModal({ action, onClose }: ActionDetailModalProps) {
         </div>
 
         {/* Body */}
-        <div className="p-6 space-y-4 text-xs max-h-[70vh] overflow-y-auto">
+        <div className="p-6 space-y-2 text-xs max-h-[45vh] overflow-y-auto">
           {/* Metadata Row */}
           <div className="grid grid-cols-2 gap-3 bg-slate-50 p-3 rounded-xl border border-slate-200/60">
             <div>
@@ -116,10 +116,10 @@ export function ActionDetailModal({ action, onClose }: ActionDetailModalProps) {
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-3 bg-slate-50 border-t border-slate-100 flex justify-end">
+        <div className="px-6 py-3 bg-slate-50 border-t border-slate-100 flex justify-center">
           <button
             onClick={onClose}
-            className="px-4 py-2 bg-slate-900 text-white rounded-xl text-xs font-semibold hover:bg-slate-800 transition-colors cursor-pointer"
+            className="px-3 py-1 bg-slate-900 text-white rounded-md text-xs font-semibold hover:bg-slate-800 transition-colors cursor-pointer"
           >
             Close
           </button>

@@ -2,6 +2,7 @@
 
 import React from "react";
 import { Sparkles, CheckCircle2, RefreshCw } from "lucide-react";
+import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip } from "recharts";
 import type { ProposedAction } from "@/types";
 
 interface RecentActivityProps {
@@ -19,6 +20,13 @@ export function RecentActivity({
 }: RecentActivityProps) {
   const approvedAction = actions.find((a) => a.status === "APPROVED");
 
+  // Compute counts of actions by type for chart
+  const actionCounts = actions.reduce((acc, a) => {
+    acc[a.type] = (acc[a.type] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>);
+  const actionData = Object.entries(actionCounts).map(([type, count]) => ({ type, count }));
+
   return (
     <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs flex flex-col h-full">
       <div className="flex items-center justify-between pb-4 border-b border-slate-100">
@@ -27,6 +35,18 @@ export function RecentActivity({
           <p className="text-xs text-slate-500">Latest pipeline and system events</p>
         </div>
       </div>
+{/* Activity Chart */}
+<div className="mb-4">
+  <h4 className="text-sm font-medium text-slate-700 mb-2">Activity Overview</h4>
+  <ResponsiveContainer width="100%" height={120}>
+    <BarChart data={actionData} margin={{ top: 5, right: 5, left: 5, bottom: 5 }}>
+      <XAxis dataKey="type" hide />
+      <YAxis hide />
+      <Tooltip formatter={(value: number) => `${value} actions`} />
+      <Bar dataKey="count" fill="#6366F1" radius={[4,4,0,0]} />
+    </BarChart>
+  </ResponsiveContainer>
+</div>
 
       <div className="flex-1 divide-y divide-slate-100 py-2">
         {/* Activity Item 1: Analysis Run */}

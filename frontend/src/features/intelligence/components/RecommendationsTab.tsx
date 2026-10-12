@@ -54,7 +54,7 @@ export function RecommendationsTab({ deal }: RecommendationsTabProps) {
         </div>
 
         {/* Action Button */}
-        <div className="pt-2 flex items-center  bg-brown justify-end">
+        <div className="pt-2 mt-2 mb-2 flex items-center bg-brown justify-end">
           <Link
             href="/approvals"
             className="inline-flex text-white items-center bg-[#5A4330] hover:bg-[#30241D] gap-2 px-5 py-2.5  rounded-xl text-xs font-semibold shadow-md shadow-dark-brown-500/20 transition-all cursor-pointer"

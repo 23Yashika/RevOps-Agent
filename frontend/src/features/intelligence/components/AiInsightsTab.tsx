@@ -27,8 +27,8 @@ export function AiInsightsTab({ deal, aiModel }: AiInsightsTabProps) {
             </p>
           </div>
         </div>
-        <div className="inline-flex">
-  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-100 border border-emerald-300 text-emerald-700 text-xs font-semibold whitespace-nowrap w-fit">
+        <div className="self-start sm:self-auto">
+  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 border border-emerald-300 text-xs font-semibold whitespace-nowrap">
     <CheckCircle2 className="w-3.5 h-3.5" />
     <span>Analysis Generated</span>
   </span>

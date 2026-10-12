@@ -11,9 +11,11 @@ interface FeatureAdoptionBarChartProps {
 
 export function FeatureAdoptionBarChart({ kpis }: FeatureAdoptionBarChartProps) {
   // Derive mock module data from the overall adoption percentage.
-  const base = kpis.featureAdoption;
+  const base = kpis?.featureAdoption ?? 0;
+  const topFeatureName = kpis?.topFeatureName ?? "Feature";
+  const topFeatureGrowth = kpis?.topFeatureGrowth ?? "0%";
   const modules = [
-    { name: kpis.topFeatureName, value: parseInt(kpis.topFeatureGrowth.replace(/%/g, "")) || base },
+    { name: topFeatureName, value: parseInt(topFeatureGrowth.replace(/%/g, "")) || base },
     { name: "Reports", value: Math.min(base, 80) },
     { name: "Dashboard", value: Math.min(base, 65) },
     { name: "Workflow", value: Math.min(base, 50) },

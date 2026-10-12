@@ -13,7 +13,7 @@ const config: Config = {
         pageBg: "#F6F2EB",
         cardBg: "#FFFDFA",
         lightSurface: "#EEE5D8",
-        sidebarBg: "#E8DDCC",
+        sidebarBg: "#D5C5B5",
         sidebarDarkBg: "#33271F",
         primaryDarkBrown: "#4A3728",
         espressoBrown: "#30241D",

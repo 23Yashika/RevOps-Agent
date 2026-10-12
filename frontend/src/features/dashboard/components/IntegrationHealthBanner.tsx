@@ -18,12 +18,12 @@ export function IntegrationHealthBanner({
   return (
     <div className="bg-cardBg rounded-2xl p-5 text-textPrimary shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
       <div className="space-y-1">
-        <h4 className="text-sm font-bold tracking-tight text-espressoBrown flex items-center gap-2">
-          <span>Connected Revenue Systems</span>
-        </h4>
-        <p className="text-xs text-textSecondary">
-          Real-time synchronization across CRM, email conversations, and meeting schedules.
-        </p>
+        <h3 className="text-lg font-bold text-slate-900 tracking-tight flex items-center gap-2">
+  <span>Connected Revenue Systems</span>
+</h3>
+<p className="text-sm text-slate-700 mt-1">
+  Real-time synchronization across CRM, email conversations, and meeting schedules.
+</p>
       </div>
 
       <div className="flex flex-wrap items-center gap-3">

@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { DollarSign,IndianRupeeIcon, AlertTriangle, ShieldCheck, Clock, CheckCircle2, Building2, IndianRupee } from "lucide-react";
+import { DollarSign, IndianRupeeIcon, AlertTriangle, Clock, CheckCircle2, Building2, IndianRupee } from "lucide-react";
 import type { DealAnalysis } from "@/types";
 
 interface OverviewTabProps {
@@ -58,28 +58,7 @@ export function OverviewTab({ deal, onGoToRecommendations }: OverviewTabProps) {
         </div>
       </div>
 
-      {/* Recommended Action Callout Banner */}
-      {deal.recommendations?.length > 0 && (
-        <div className="bg-gradient-to-r from-dark-brown-50 to-indigo-50 border border-dark-brown-200 rounded-2xl p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex items-start gap-3">
-            <div className="p-2 rounded-xl bg-dark-brown-600 text-white shrink-0 mt-0.5">
-              <ShieldCheck className="w-5 h-5" />
-            </div>
-            <div>
-              <h4 className="text-sm font-bold text-slate-900">Recommended Next Action</h4>
-              <p className="text-xs text-slate-600 mt-0.5 max-w-xl">
-                {deal.recommendations[0]}
-              </p>
-            </div>
-          </div>
-          <button
-            onClick={onGoToRecommendations}
-            className="px-4 py-2 bg-dark-brown-600 hover:bg-dark-brown-700 text-white rounded-xl text-xs font-semibold shadow-xs transition-colors shrink-0 cursor-pointer"
-          >
-            Review Action
-          </button>
-        </div>
-      )}
+      
 
       {/* Signal Health Checklist */}
       <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs space-y-4">
@@ -105,7 +84,7 @@ export function OverviewTab({ deal, onGoToRecommendations }: OverviewTabProps) {
             </p>
           </div>
 
-          <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/80 space-y-1">
+          <div className="p-4 rounded-xl bg-slate-100 border border-slate-200/80 space-y-1">
             <span className="text-slate-400 uppercase font-bold text-[10px]">Google Calendar</span>
             <p className="font-bold text-slate-800">
               {deal.dataCoverage?.matchingEvents || 0} Matched Meeting(s)

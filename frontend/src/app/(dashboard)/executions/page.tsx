@@ -1,8 +1,9 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { Header } from "@/components/layout/Header";
 import { RefreshCw, History, AlertCircle } from "lucide-react";
+import { useToast } from "@/providers/toast-provider";
 import { useExecutionsData } from "@/features/executions/hooks/useExecutionsData";
 import { ExecutionsFilters } from "@/features/executions/components/ExecutionsFilters";
 import { ExecutionsTable } from "@/features/executions/components/ExecutionsTable";
@@ -12,6 +13,9 @@ import { EmptyState } from "@/components/shared/EmptyState";
 import { LoadingSkeleton } from "@/components/shared/LoadingSkeleton";
 
 export default function ExecutionsPage() {
+  const { toast } = useToast();
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const {
     actions,
     totalCount,
@@ -37,6 +41,19 @@ export default function ExecutionsPage() {
     setSelectedType("ALL");
   };
 
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    try {
+      await refetch?.();
+      setLastUpdated(new Date());
+      toast('Data refreshed successfully', undefined, 'success');
+    } catch (err) {
+      toast('Refresh failed', (err as any)?.message, 'error');
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* 1. Page Header */}
@@ -45,11 +62,17 @@ export default function ExecutionsPage() {
         subtitle="Track execution status, audit logs, and status transitions."
         action={
           <button
-            onClick={() => refetch()}
-            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white border border-slate-200 text-slate-700 text-xs font-semibold hover:bg-slate-50 shadow-xs transition-colors cursor-pointer"
+            onClick={handleRefresh}
+            disabled={isRefreshing}
+            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white border border-slate-200 text-slate-700 text-xs font-semibold hover:bg-slate-50 shadow-xs transition-colors cursor-pointer disabled:opacity-50"
           >
-            <RefreshCw className="w-3.5 h-3.5 text-slate-500" />
-            <span>Refresh</span>
+            <RefreshCw className={`w-3.5 h-3.5 text-slate-500 ${isRefreshing ? 'animate-spin' : ''}`} />
+            <span>{isRefreshing ? 'Refreshing...' : 'Refresh'}</span>
+            {lastUpdated && (
+              <span className="text-xs text-slate-500 ml-2">
+                Last updated: {lastUpdated.toLocaleTimeString()}
+              </span>
+            )}
           </button>
         }
       />
