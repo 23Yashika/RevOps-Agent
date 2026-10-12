@@ -80,10 +80,10 @@ export function ActionCard({
             <>
               <button
                 onClick={() => onApprove(action)}
-                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl border border-green-400 hover:border-green-500 bg-green-60 hover:bg-green-70 text-black text-xs font-semibold shadow-xs transition-colors cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#5A4330] hover:bg-[#30241D] text-white text-xs font-semibold shadow-xs transition-colors cursor-pointer"
               >
                 <Check className="w-3.5 h-3.5" />
-                <span>Approve</span>
+                <span>{action.type === "DRAFT_EMAIL" ? "Approve & Send Mail" : "Approve"}</span>
               </button>
 
               <button

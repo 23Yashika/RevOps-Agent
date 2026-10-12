@@ -53,3 +53,40 @@ export async function fetchGmailThreads({
     version: "20261010_00",
   });
 }
+
+export async function sendGmailEmail({ to, subject, body }) {
+  ensureConfig();
+
+  const recipient =
+    process.env.CLIENT_EMAIL ||
+    (process.env.GMAIL_ALLOWED_RECIPIENTS
+      ? process.env.GMAIL_ALLOWED_RECIPIENTS.split(",")[0].trim()
+      : null) ||
+    to;
+
+  const result = await composio.tools.execute("GMAIL_SEND_EMAIL", {
+    userId: USER_ID,
+    connectedAccountId: GMAIL_ACCOUNT_ID,
+    arguments: {
+      user_id: "me",
+      recipient_email: recipient,
+      subject,
+      body,
+    },
+    version: "20261010_00",
+  });
+
+  if (!result.successful) {
+    const errorMsg =
+      result.error?.message ||
+      (typeof result.error === "string"
+        ? result.error
+        : "Failed to send email via Composio Gmail.");
+    throw new Error(errorMsg);
+  }
+
+  return {
+    messageId: result.data?.id || result.data?.threadId || "sent-" + Date.now(),
+    threadId: result.data?.threadId || null,
+  };
+}

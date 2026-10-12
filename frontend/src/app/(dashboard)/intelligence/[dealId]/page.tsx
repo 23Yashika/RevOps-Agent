@@ -116,7 +116,10 @@ export default function IntelligencePage() {
       )}
 
       {activeTab === "recommendations" && (
-        <RecommendationsTab deal={deal} />
+        <RecommendationsTab
+          deal={deal}
+          onGoToEmail={() => setActiveTab("email")}
+        />
       )}
 
       {activeTab === "email" && (

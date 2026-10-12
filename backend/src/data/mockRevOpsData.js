@@ -1,11 +1,19 @@
-// src/data/mockRevOpsData.js
+// backend/src/data/mockRevOpsData.js
+import { generateSeedData } from "../../seed/seedData.js";
 
-export const mockEmails = [
+const seedData = generateSeedData();
+
+// Extract all emails and calendar events from the 10 seed companies
+const seedEmails = seedData.flatMap((item) => item.emails || []);
+const seedCalendarEvents = seedData.flatMap((item) => item.calendarEvents || []);
+
+// Legacy demo records kept for backward compatibility with pre-existing tests/demos
+const legacyMockEmails = [
   {
     id: "demo-email-acme-1",
     subject: "Follow-up on Acme implementation proposal",
-    from: "sales@example.com",
-    to: "alex.morgan@example.com",
+    from: "sales@revops-agent.internal",
+    to: "alex.morgan@acme-demo.internal",
     date: "2026-10-09T10:00:00Z",
     snippet:
       "We have followed up twice regarding the Acme proposal but have not received a response. Could we confirm the next steps?",
@@ -14,8 +22,8 @@ export const mockEmails = [
   {
     id: "demo-email-globex-1",
     subject: "Globex renewal discussion",
-    from: "sales@example.com",
-    to: "taylor.chen@example.com",
+    from: "sales@revops-agent.internal",
+    to: "taylor.chen@globex-demo.internal",
     date: "2026-10-10T09:00:00Z",
     snippet:
       "We would like to discuss the Globex renewal, review requirements, and confirm the renewal timeline.",
@@ -24,8 +32,8 @@ export const mockEmails = [
   {
     id: "demo-email-initech-1",
     subject: "Initech expansion pricing request",
-    from: "sales@example.com",
-    to: "jordan.lee@example.com",
+    from: "sales@revops-agent.internal",
+    to: "jordan.lee@initech-demo.internal",
     date: "2026-10-10T11:00:00Z",
     snippet:
       "The Initech team requested updated pricing for the proposed expansion. Please prepare the revised proposal.",
@@ -33,7 +41,7 @@ export const mockEmails = [
   },
 ];
 
-export const mockCalendarEvents = [
+const legacyMockCalendarEvents = [
   {
     id: "demo-event-acme-1",
     summary: "Acme follow-up call",
@@ -59,3 +67,6 @@ export const mockCalendarEvents = [
     demo: true,
   },
 ];
+
+export const mockEmails = [...seedEmails, ...legacyMockEmails];
+export const mockCalendarEvents = [...seedCalendarEvents, ...legacyMockCalendarEvents];

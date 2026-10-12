@@ -1,7 +1,10 @@
 "use client";
 
 import React, { useState } from "react";
-import { Copy, Check, Mail, Sparkles } from "lucide-react";
+import { Copy, Check, Send, Loader2, Sparkles, CheckCircle2 } from "lucide-react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { api } from "@/lib/api-client";
+import { useToast } from "@/providers/toast-provider";
 import type { DealAnalysis } from "@/types";
 
 interface EmailDraftTabProps {
@@ -11,10 +14,34 @@ interface EmailDraftTabProps {
 
 export function EmailDraftTab({ deal, onCopy }: EmailDraftTabProps) {
   const [copied, setCopied] = useState(false);
+  const [isSending, setIsSending] = useState(false);
+  const [isSent, setIsSent] = useState(false);
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
 
-  const subject = `Confirming our upcoming call and next steps for ${deal.company || "your"} proposal`;
+  const accountName = deal.company || deal.dealName;
 
-  const body = `Hi ${deal.company ? deal.company + " Team" : "there"},
+  const { data: actionsData } = useQuery({
+    queryKey: ["actions"],
+    queryFn: () => api.getActions(),
+    staleTime: 5000,
+  });
+
+  const draftAction = actionsData?.actions?.find(
+    (a) =>
+      a.type === "DRAFT_EMAIL" &&
+      (a.accountName === accountName || a.payload?.dealId === deal.dealId)
+  );
+
+  const isAlreadyExecuted = draftAction?.status === "EXECUTED";
+
+  const subject =
+    (deal.aiInsights as any)?.followUpEmail?.subject ||
+    `Confirming our upcoming call and next steps for ${deal.company || "your"} proposal`;
+
+  const body =
+    (deal.aiInsights as any)?.followUpEmail?.body ||
+    `Hi ${deal.company ? deal.company + " Team" : "there"},
 
 I hope your week is going well.
 
@@ -33,6 +60,57 @@ Revenue Operations`;
     setCopied(true);
     setTimeout(() => setCopied(false), 3000);
   };
+
+  const handleSendEmail = async () => {
+    setIsSending(true);
+    try {
+      const res = await api.sendFollowUpEmail({
+        dealId: deal.dealId || undefined,
+        accountName,
+        subject,
+        body,
+      });
+
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["actions"] }),
+        queryClient.invalidateQueries({ queryKey: ["latest-analysis"] }),
+      ]);
+      await queryClient.refetchQueries({ queryKey: ["actions"] });
+
+      toast(
+        "Email Sent Successfully",
+        res.execution?.message || "Follow-up email has been sent to client and removed from pending queue.",
+        "success"
+      );
+      setIsSent(true);
+    } catch (err: any) {
+      toast("Failed to Send Email", err.message || "An unexpected error occurred.", "error");
+    } finally {
+      setIsSending(false);
+    }
+  };
+
+  if (isSent || isAlreadyExecuted) {
+    return (
+      <div className="space-y-6">
+        <div className="bg-white p-8 rounded-2xl border border-emerald-200 shadow-xs text-center space-y-4">
+          <div className="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center mx-auto text-emerald-600">
+            <CheckCircle2 className="w-6 h-6" />
+          </div>
+          <div>
+            <h3 className="text-sm font-bold text-slate-900">Follow-up Email Sent to Client</h3>
+            <p className="text-xs text-slate-500 mt-1 max-w-md mx-auto">
+              This follow-up email has been approved and delivered to the client. This action has been completed and is no longer pending in the review list.
+            </p>
+          </div>
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+            <span className="w-2 h-2 rounded-full bg-emerald-500" />
+            <span>Sent & Executed</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -72,15 +150,16 @@ Revenue Operations`;
         </div>
 
         {/* Actions */}
-        <div className="pt-2 flex justify-end">
+        <div className="pt-2 flex items-center justify-end gap-3">
           <button
-  onClick={handleCopy}
-  className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#5A4330] hover:bg-[#30241D] text-white rounded-xl text-xs font-semibold shadow-md shadow-[#5A4330]/20 transition-all cursor-pointer"
->
+            onClick={handleCopy}
+            type="button"
+            className="inline-flex items-center gap-2 px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-semibold transition-all cursor-pointer"
+          >
             {copied ? (
               <>
-                <Check className="w-4 h-4 text-emerald-300" />
-                <span>Copied to Clipboard!</span>
+                <Check className="w-4 h-4 text-emerald-600" />
+                <span>Copied!</span>
               </>
             ) : (
               <>
@@ -89,8 +168,27 @@ Revenue Operations`;
               </>
             )}
           </button>
+
+          <button
+            onClick={handleSendEmail}
+            disabled={isSending}
+            type="button"
+            className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#5A4330] hover:bg-[#30241D] disabled:opacity-60 text-white rounded-xl text-xs font-semibold shadow-md shadow-[#5A4330]/20 transition-all cursor-pointer"
+          >
+            {isSending ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                <span>Sending Email...</span>
+              </>
+            ) : (
+              <>
+                <Send className="w-4 h-4" />
+                <span>Send Email</span>
+              </>
+            )}
+          </button>
         </div>
       </div>
     </div>
   );
-}
+}

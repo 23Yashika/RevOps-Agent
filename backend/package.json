@@ -4,8 +4,12 @@
   "main": "server.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "test": "node --test test/**/*.test.js",
+    "start": "node server.js",
+    "seed": "node seed/seed-hubspot-data.js && node seed/seed-posthog-data.js",
+    "seed:hubspot": "node seed/seed-hubspot-data.js",
+    "seed:posthog": "node seed/seed-posthog-data.js",
+    "seed:clean": "node seed/seed-hubspot-data.js --clean"
   },
   "keywords": [],
   "author": "",

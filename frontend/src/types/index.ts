@@ -151,6 +151,10 @@ export interface ActionMutationResponse {
   action: ProposedAction;
   dryRun?: boolean;
   message?: string;
+  execution?: {
+    dryRun?: boolean;
+    message?: string;
+  };
 }
 
 export interface GoogleStatusResponse {

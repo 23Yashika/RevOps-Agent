@@ -1,5 +1,4 @@
 import prisma from "../config/database.js";
-import { createProposedAction } from "./action.service.js";
 
 function toJsonSafe(value) {
   return JSON.parse(
@@ -9,11 +8,15 @@ function toJsonSafe(value) {
   );
 }
 
-function buildActionFromDeal(deal) {
+function getAccountName(deal) {
+  return deal.company || deal.dealName || "Unknown account";
+}
+
+function buildNotifyOwnerAction(deal) {
   const riskScore = Number(deal.riskScore) || 0;
   const riskLevel = String(deal.riskLevel || "").toLowerCase();
 
-  // Do not create actions for low-risk deals automatically.
+  // Preserve the existing rule: do not notify owners for low-risk deals.
   if (riskScore < 25 && riskLevel !== "high" && riskLevel !== "medium") {
     return null;
   }
@@ -21,13 +24,11 @@ function buildActionFromDeal(deal) {
   const recommendation =
     deal.aiInsights?.recommendation ||
     deal.aiInsights?.recommendedAction ||
+    deal.aiInsights?.nextBestAction ||
     deal.recommendations?.[0] ||
     "Review the deal and confirm the next follow-up.";
 
-  const accountName =
-    deal.company ||
-    deal.dealName ||
-    "Unknown account";
+  const accountName = getAccountName(deal);
 
   return {
     accountName,
@@ -41,6 +42,89 @@ function buildActionFromDeal(deal) {
       subject: `RevOps follow-up: ${deal.dealName || accountName}`,
     },
     rationale: `Risk score: ${riskScore}. ${recommendation}`,
+    evidenceIds: toJsonSafe(deal.evidence || []),
+  };
+}
+
+
+function buildDraftEmailAction(deal) {
+  const riskScore = Number(deal.riskScore) || 0;
+  const riskLevel = String(deal.riskLevel || "").toLowerCase();
+  const contact = deal.primaryContact;
+  const email = String(contact?.email || "").trim();
+  const aiDraft = deal.aiInsights?.followUpEmail;
+
+  const isActionableRisk =
+    riskScore >= 25 || riskLevel === "medium" || riskLevel === "high";
+
+  if (!isActionableRisk || !contact || !email) {
+    return null;
+  }
+
+  // Reject malformed and placeholder addresses.
+  if (
+    !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ||
+    /\.example$/i.test(email.split("@")[1] || "")
+  ) {
+    return null;
+  }
+
+  const accountName = getAccountName(deal);
+  const dealName = deal.dealName || "Unnamed deal";
+
+  const recommendation =
+    deal.aiInsights?.nextBestAction ||
+    deal.aiInsights?.recommendation ||
+    deal.recommendations?.[0] ||
+    "Review the proposal and agree on the next steps.";
+
+  // Prefer the AI draft; use a factual fallback if AI is unavailable.
+  const subject =
+    String(aiDraft?.subject || "").trim() ||
+    `Following up on ${dealName}`;
+
+  const body =
+    String(aiDraft?.body || "").trim() ||
+    [
+      `Hi ${contact.firstName || "there"},`,
+      "",
+      `I wanted to follow up regarding ${dealName} at ${accountName}.`,
+      "",
+      "We would appreciate an update on the proposal and any questions or concerns we can help address.",
+      "",
+      `Suggested next step: ${recommendation}`,
+      "",
+      "Please let us know a convenient time to discuss the next steps.",
+      "",
+      "Best regards,",
+      "Customer Success Team",
+    ].join("\n");
+
+  const rationale =
+    deal.aiInsights?.riskExplanation ||
+    `A follow-up draft was prepared because this deal has a ${riskLevel || "qualifying"} risk level (score: ${riskScore}).`;
+
+  return {
+    accountName,
+    type: "DRAFT_EMAIL",
+    payload: {
+      dealId: deal.dealId || deal.id || null,
+      dealName,
+      company: deal.company || accountName,
+      contactId: contact.id || null,
+      contactName:
+        [contact.firstName, contact.lastName].filter(Boolean).join(" ") ||
+        null,
+      to: email,
+      subject,
+      body,
+      riskScore,
+      riskLevel: deal.riskLevel || "unknown",
+      nextBestAction: recommendation,
+      requiresHumanApproval: true,
+      sent: false,
+    },
+    rationale,
     evidenceIds: toJsonSafe(deal.evidence || []),
   };
 }
@@ -71,46 +155,51 @@ export async function persistAnalysis(analysis, actor = "revops-agent") {
     const createdActions = [];
 
     for (const deal of safeAnalysis.deals) {
-      const actionData = buildActionFromDeal(deal);
+      // Keep the existing owner notification and add a separate email draft.
+      const actionsForDeal = [
+        buildNotifyOwnerAction(deal),
+        buildDraftEmailAction(deal),
+      ].filter(Boolean);
 
-      if (!actionData) continue;
-
-      // The action and its audit event are created by the existing service.
-      // Do not create an action twice if it already exists for this run/deal.
-      const existing = await tx.proposedAction.findFirst({
-        where: {
-          analysisRunId: analysisRun.id,
-          accountName: actionData.accountName,
-          type: actionData.type,
-        },
-      });
-
-      if (existing) {
-        createdActions.push(existing);
-        continue;
-      }
-
-      const action = await tx.proposedAction.create({
-        data: {
-          ...actionData,
-          analysisRunId: analysisRun.id,
-        },
-      });
-
-      await tx.auditLog.create({
-        data: {
-          action: "ACTION_CREATED",
-          actor,
-          proposedActionId: action.id,
-          details: {
-            source: "AI_ANALYSIS",
+      for (const actionData of actionsForDeal) {
+        // Avoid duplicates of the same action type within this analysis run.
+        const existing = await tx.proposedAction.findFirst({
+          where: {
             analysisRunId: analysisRun.id,
-            riskScore: actionData.payload.riskScore,
+            accountName: actionData.accountName,
+            type: actionData.type,
           },
-        },
-      });
+        });
 
-      createdActions.push(action);
+        if (existing) {
+          createdActions.push(existing);
+          continue;
+        }
+
+        const action = await tx.proposedAction.create({
+          data: {
+            ...actionData,
+            analysisRunId: analysisRun.id,
+          },
+        });
+
+        await tx.auditLog.create({
+          data: {
+            action: "ACTION_CREATED",
+            actor,
+            proposedActionId: action.id,
+            details: {
+              source: "AI_ANALYSIS",
+              analysisRunId: analysisRun.id,
+              type: actionData.type,
+              riskScore: actionData.payload.riskScore,
+              requiresHumanApproval: actionData.type === "DRAFT_EMAIL",
+            },
+          },
+        });
+
+        createdActions.push(action);
+      }
     }
 
     return {
@@ -122,4 +211,3 @@ export async function persistAnalysis(analysis, actor = "revops-agent") {
     timeout: 30000, // 30 seconds for all writes to finish
   });
 }
-  

@@ -471,8 +471,9 @@ function analyzeDeal(
     );
   }
 
-  // 2. Overdue close date.
-  if (closeDate) {
+  // 2. Overdue close date (exclude deals already won).
+  const isClosedWon = stage.includes("closedwon") || stage.includes("closed won") || stage === "won";
+  if (closeDate && !isClosedWon) {
     const closeTimestamp = new Date(closeDate).getTime();
 
     if (
@@ -552,6 +553,23 @@ function analyzeDeal(
     );
   }
 
+  // Keep normalized contact details available for later approval-gated actions.
+  // Do not guess a recipient when multiple contacts have email addresses.
+  const normalizedContacts = relatedContacts.map((contact) => ({
+    id: contact?.id ? String(contact.id) : null,
+    firstName: String(valueOf(contact, "firstname") || ""),
+    lastName: String(valueOf(contact, "lastname") || ""),
+    email: String(valueOf(contact, "email") || "").trim(),
+  })).filter((contact) => contact.email);
+
+  const uniqueContactEmails = new Map(
+    normalizedContacts.map((contact) => [contact.email.toLowerCase(), contact])
+  );
+
+  const primaryContact = uniqueContactEmails.size === 1
+    ? [...uniqueContactEmails.values()][0]
+    : null;
+
   // 6. Related calendar events.
   const relatedEvents = findRelatedEvents({
     companyName,
@@ -597,6 +615,11 @@ function analyzeDeal(
     amount,
     closeDate: closeDate || null,
 
+    // Additive fields: existing consumers can ignore them.
+    // primaryContact is null if the recipient is ambiguous.
+    contacts: normalizedContacts,
+    primaryContact,
+
     riskScore: score,
 
     riskLevel:
@@ -641,11 +664,13 @@ function analyzeDeal(
 // ---------------------------------------------
 
 export async function getRevOpsAnalysis(limit = 10) {
+  const fetchLimit = DEMO_MODE ? Math.max(limit, 25) : limit;
+
   // Step 1: Retrieve HubSpot data.
   const [companies, contacts, deals] = await Promise.all([
-    getHubSpotCompanies(limit),
-    getHubSpotContacts(limit),
-    getHubSpotDeals(limit),
+    getHubSpotCompanies(fetchLimit),
+    getHubSpotContacts(fetchLimit),
+    getHubSpotDeals(fetchLimit),
   ]);
 
   // Step 2: Retrieve Gmail and Calendar data directly.

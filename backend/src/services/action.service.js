@@ -1,5 +1,6 @@
 
 import prisma from "../config/database.js";
+import { sendGmailMessage } from "../routes/googleRoutes.js";
 
 const ACTION_TYPES = [
   "NOTIFY_OWNER",
@@ -96,7 +97,13 @@ async function reviewAction({ id, actor, note, decision }) {
   return prisma.$transaction(async (tx) => {
     const existing = await tx.proposedAction.findUnique({
       where: { id },
-    });
+    },
+    {
+      maxWait: 20000,
+      timeout: 30000,
+    }
+  
+  );
 
     if (!existing) {
       throw new Error("Proposed action not found.");
@@ -169,6 +176,7 @@ export async function rejectProposedAction({ id, actor, note }) {
 
 // Phase 7: Safe dry-run execution.
 // No external service is called by this function yet.
+
 export async function executeProposedAction({
   id,
   actor = "api-user",
@@ -177,138 +185,206 @@ export async function executeProposedAction({
     throw new Error("Action ID and executor are required.");
   }
 
-  if (process.env.DRY_RUN !== "true") {
-    throw new Error(
-      "Real action executors are not configured yet. Set DRY_RUN=true for safe testing."
-    );
-  }
+  const dryRun = process.env.DRY_RUN === "true";
 
-  // Atomically claim an approved action.
-  const claimedAction = await prisma.$transaction(async (tx) => {
-    const existing = await tx.proposedAction.findUnique({
-      where: { id },
-    });
-
-    if (!existing) {
-      throw new Error("Proposed action not found.");
-    }
-
-    if (existing.status !== "APPROVED") {
-      throw new Error(
-        `Only approved actions can be executed. Current status: ${existing.status}`
-      );
-    }
-
-    const claimed = await tx.proposedAction.updateMany({
-      where: {
-        id,
-        status: "APPROVED",
-      },
-      data: {
-        status: "EXECUTING",
-        errorMessage: null,
-      },
-    });
-
-    if (claimed.count !== 1) {
-      throw new Error(
-        "Action could not be claimed. It may already be executing or completed."
-      );
-    }
-
-    await tx.auditLog.create({
-      data: {
-        action: "ACTION_EXECUTION_STARTED",
-        actor: actor.trim(),
-        proposedActionId: id,
-        details: {
-          mode: "DRY_RUN",
-          previousStatus: "APPROVED",
-          newStatus: "EXECUTING",
-        },
-      },
-    });
-
-    return tx.proposedAction.findUnique({
-      where: { id },
-    });
-  }, {
-    maxWait: 20000,
-    timeout: 30000,
+  console.log("[EMAIL EXECUTION MODE]", {
+    dryRun,
+    configuredValue: process.env.DRY_RUN,
   });
 
-  try {
-    const result = await prisma.$transaction(async (tx) => {
-      const updated = await tx.proposedAction.updateMany({
-        where: {
-          id: claimedAction.id,
-          status: "EXECUTING",
-        },
+  console.log("[ACTION EXECUTION ATTEMPT]", {
+    actionId: id,
+    actor,
+    dryRun,
+  });
+
+  // Claim the action atomically so concurrent requests cannot both send it.
+  const claimedAction = await prisma.$transaction(
+    async (tx) => {
+      const existing = await tx.proposedAction.findUnique({
+        where: { id },
+      });
+
+      if (!existing) {
+        throw new Error("Proposed action not found.");
+      }
+
+      if (existing.status !== "APPROVED") {
+        throw new Error(
+          `Only approved actions can be executed. Current status: ${existing.status}`
+        );
+      }
+
+      if (!dryRun && existing.type !== "DRAFT_EMAIL") {
+        throw new Error(
+          `Real execution is not configured for ${existing.type}.`
+        );
+      }
+
+      const claimed = await tx.proposedAction.updateMany({
+        where: { id, status: "APPROVED" },
         data: {
-          status: "EXECUTED",
-          executedAt: new Date(),
+          status: "EXECUTING",
           errorMessage: null,
         },
       });
 
-      if (updated.count !== 1) {
-        throw new Error("Action execution state changed unexpectedly.");
+      if (claimed.count !== 1) {
+        throw new Error(
+          "Action could not be claimed. It may already be executing or completed."
+        );
       }
 
       await tx.auditLog.create({
         data: {
-          action: "ACTION_EXECUTED",
+          action: "ACTION_EXECUTION_STARTED",
           actor: actor.trim(),
           proposedActionId: id,
           details: {
-            mode: "DRY_RUN",
-            externalCallMade: false,
-            message:
-              "Execution simulated; no external action was performed.",
+            mode: dryRun ? "DRY_RUN" : "LIVE",
+            previousStatus: "APPROVED",
+            newStatus: "EXECUTING",
           },
         },
       });
 
-      return tx.proposedAction.findUnique({
-        where: { id },
-      });
-    }, {
-      maxWait: 20000,
-      timeout: 30000,
-    });
+      return existing;
+    },
+    { maxWait: 20000, timeout: 30000 }
+  );
 
-    return {
-      action: result,
-      dryRun: true,
-      message: "Dry run completed. No external action was performed.",
-    };
-  } catch (error) {
-    await prisma.$transaction(async (tx) => {
-      const updated = await tx.proposedAction.updateMany({
-        where: {
-          id: claimedAction.id,
-          status: "EXECUTING",
-        },
-        data: {
-          status: "FAILED",
-          errorMessage: error.message,
-        },
+  console.log("[ACTION EXECUTION CLAIMED]", {
+    actionId: claimedAction.id,
+    type: claimedAction.type,
+    status: claimedAction.status,
+  });
+
+  try {
+    let externalId = null;
+
+    if (!dryRun) {
+      const payload = claimedAction.payload;
+
+      const targetEmail =
+        process.env.TEST_RECIPIENT_EMAIL ||
+        process.env.CLIENT_EMAIL ||
+        (process.env.GMAIL_ALLOWED_RECIPIENTS
+          ? process.env.GMAIL_ALLOWED_RECIPIENTS.split(",")[0].trim()
+          : null) ||
+        payload?.to ||
+        "radspatidar16@gmail.com";
+
+      const emailSubject =
+        (typeof payload?.subject === "string" && payload.subject.trim())
+          ? payload.subject.trim()
+          : `Following up regarding ${claimedAction.accountName || "your proposal"}`;
+
+      const emailBody =
+        (typeof payload?.body === "string" && payload.body.trim())
+          ? payload.body.trim()
+          : `Hi team,\n\nI wanted to quickly follow up on our previous conversation regarding ${claimedAction.accountName || "our proposal"}.\n\nBest regards,\nRevenue Operations`;
+
+      const sent = await sendGmailMessage({
+        to: targetEmail,
+        subject: emailSubject,
+        body: emailBody,
       });
 
-      if (updated.count === 1) {
+      externalId = sent.messageId;
+    }
+
+    const result = await prisma.$transaction(
+      async (tx) => {
+        const updated = await tx.proposedAction.updateMany({
+          where: { id, status: "EXECUTING" },
+          data: {
+            status: "EXECUTED",
+            executedAt: new Date(),
+            externalId,
+            errorMessage: null,
+          },
+        });
+
+        if (updated.count !== 1) {
+          throw new Error("Action execution state changed unexpectedly.");
+        }
+
         await tx.auditLog.create({
           data: {
-            action: "ACTION_EXECUTION_FAILED",
+            action: "ACTION_EXECUTED",
             actor: actor.trim(),
             proposedActionId: id,
             details: {
-              mode: "DRY_RUN",
-              error: error.message,
+              mode: dryRun ? "DRY_RUN" : "LIVE",
+              externalCallMade: !dryRun,
+              externalId,
+              message: dryRun
+                ? "Execution simulated; no external action was performed."
+                : "Gmail accepted the message for sending.",
             },
           },
         });
-      }
-    });
+
+        return tx.proposedAction.findUnique({ where: { id } });
+      },
+      { maxWait: 20000, timeout: 30000 }
+    );
+
+    return {
+      action: result,
+      dryRun,
+      message: dryRun
+        ? "Dry run completed. No external action was performed."
+        : "Gmail accepted the email for sending.",
+    };
+  } catch (error) {
+    // A live Gmail call may have succeeded even if a later database
+    // operation failed. Do not mark it FAILED and invite a blind retry.
+    const message = error instanceof Error
+      ? error.message
+      : String(error);
+
+    const safeErrorMessage = !dryRun
+      ? `Live execution outcome may be uncertain. Do not retry automatically. Details: ${message}`
+      : message;
+
+    try {
+      await prisma.$transaction(
+        async (tx) => {
+          const updated = await tx.proposedAction.updateMany({
+            where: { id, status: "EXECUTING" },
+            data: {
+              // Keep live failures in EXECUTING for manual investigation.
+              status: dryRun ? "FAILED" : "EXECUTING",
+              errorMessage: safeErrorMessage,
+            },
+          });
+
+          if (updated.count === 1) {
+            await tx.auditLog.create({
+              data: {
+                action: "ACTION_EXECUTION_FAILED",
+                actor: actor.trim(),
+                proposedActionId: id,
+                details: {
+                  mode: dryRun ? "DRY_RUN" : "LIVE",
+                  outcomeUncertain: !dryRun,
+                  error: safeErrorMessage,
+                },
+              },
+            });
+          }
+        },
+        { maxWait: 20000, timeout: 30000 }
+      );
+    } catch (loggingError) {
+      console.error(
+        "Failed to persist action execution error:",
+        loggingError instanceof Error
+          ? loggingError.message
+          : String(loggingError)
+      );
+    }
 
     throw error;
   }

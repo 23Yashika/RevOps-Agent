@@ -103,4 +103,16 @@ export const api = {
     const res = await apiClient.get("/google/auth");
     return res.data;
   },
+
+  sendFollowUpEmail: async (data: {
+    dealId?: string;
+    accountName?: string;
+    subject: string;
+    body: string;
+    to?: string;
+    actor?: string;
+  }): Promise<ActionMutationResponse> => {
+    const res = await apiClient.post<ActionMutationResponse>("/actions/send-email", data);
+    return res.data;
+  },
 };

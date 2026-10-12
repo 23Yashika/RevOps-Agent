@@ -17,6 +17,7 @@ build/
 # Logs
 *.log
 .env
+.env.example
 
 .next/
 out/

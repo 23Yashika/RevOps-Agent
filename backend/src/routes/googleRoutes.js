@@ -33,12 +33,20 @@ function createOAuthClient() {
 // Tokens and OAuth states are lost when the server restarts.
 const oauthClient = createOAuthClient();
 let savedTokens = null;
+
+function getGrantedScopes() {
+  return savedTokens?.scope
+    ? savedTokens.scope.split(/\s+/)
+    : [];
+}
+
 const pendingStates = new Map();
 
 const scopes = [
   "openid",
   "email",
   "https://www.googleapis.com/auth/gmail.readonly",
+  "https://www.googleapis.com/auth/gmail.send",
   "https://www.googleapis.com/auth/calendar.readonly",
 ];
 
@@ -270,5 +278,89 @@ router.get("/calendar", async (req, res) => {
     });
   }
 });
+
+
+export async function sendGmailMessage({ to, subject, body }) {
+  const allowedRecipients = (process.env.GMAIL_ALLOWED_RECIPIENTS || "")
+    .split(",")
+    .map((email) => email.trim().toLowerCase())
+    .filter(Boolean);
+
+  const recipient =
+    process.env.TEST_RECIPIENT_EMAIL ||
+    process.env.CLIENT_EMAIL ||
+    (allowedRecipients.length > 0 ? allowedRecipients[0] : to);
+
+  // If Google OAuth tokens are saved in this session, attempt Google API send first
+  if (savedTokens) {
+    try {
+      oauthClient.setCredentials(savedTokens);
+
+      const gmail = google.gmail({
+        version: "v1",
+        auth: oauthClient,
+      });
+
+      const encodeHeader = (value) =>
+        `=?UTF-8?B?${Buffer.from(value, "utf8").toString("base64")}?=`;
+
+      const message = [
+        `To: ${recipient.trim()}`,
+        `Subject: ${encodeHeader(subject)}`,
+        "MIME-Version: 1.0",
+        'Content-Type: text/plain; charset="UTF-8"',
+        "Content-Transfer-Encoding: base64",
+        "",
+        Buffer.from(body, "utf8").toString("base64"),
+      ].join("\r\n");
+
+      const raw = Buffer.from(message, "utf8").toString("base64url");
+
+      const response = await gmail.users.messages.send({
+        userId: "me",
+        requestBody: { raw },
+      });
+
+      return {
+        messageId: response.data.id,
+        threadId: response.data.threadId,
+      };
+    } catch (oauthErr) {
+      console.warn("Direct Google OAuth send failed, falling back to Composio Gmail:", oauthErr.message);
+    }
+  }
+
+  // Seamless fallback to Composio Gmail which is connected and active
+  const { sendGmailEmail } = await import("../services/gmail.service.js");
+  return sendGmailEmail({ to: recipient, subject, body });
+}
+
+
+router.get("/scope-check", (req, res) => {
+  if (!savedTokens) {
+    return res.status(401).json({
+      success: false,
+      connected: false,
+      message: "Reconnect Google first.",
+    });
+  }
+
+  const scopes = getGrantedScopes();
+
+  res.json({
+    success: true,
+    connected: true,
+    gmailRead: scopes.includes(
+      "https://www.googleapis.com/auth/gmail.readonly"
+    ),
+    gmailSend: scopes.includes(
+      "https://www.googleapis.com/auth/gmail.send"
+    ),
+    calendarRead: scopes.includes(
+      "https://www.googleapis.com/auth/calendar.readonly"
+    ),
+  });
+});
+
 
 export default router;

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -54,18 +54,71 @@ export function useApprovalsData() {
   const approveMutation = useMutation({
     mutationFn: ({ id, note }: { id: string; note?: string }) =>
       api.approveAction(id, "Parthika Mahajan (Reviewer)", note),
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["actions"] });
-      queryClient.invalidateQueries({ queryKey: ["latest-analysis"] });
+
+    onSuccess: async (data) => {
+      const result = data as typeof data & {
+        execution?: {
+          dryRun?: boolean;
+          message?: string;
+        };
+      };
+
       setConfirmDialog(null);
+
+      // Refresh status counts and action cards after every approval.
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["actions"] }),
+        queryClient.invalidateQueries({ queryKey: ["latest-analysis"] }),
+      ]);
+      await queryClient.refetchQueries({ queryKey: ["actions"], type: "active" });
+
+      if (data.action.type === "DRAFT_EMAIL") {
+        if (
+          data.action.status === "EXECUTED" &&
+          result.execution?.dryRun === false
+        ) {
+          toast(
+            "Email sent",
+            result.execution.message || "Gmail accepted the email for sending.",
+            "success"
+          );
+        } else if (
+          data.action.status === "EXECUTED" &&
+          result.execution?.dryRun === true
+        ) {
+          toast(
+            "Dry run only",
+            "The action was simulated. No email was sent.",
+            "warning"
+          );
+        } else {
+          toast(
+            "Email not confirmed",
+            result.execution?.message ||
+              `The action status is ${data.action.status}. Check the action details before retrying.`,
+            "warning"
+          );
+        }
+        return;
+      }
+
       toast(
         "Action Approved",
         `Action for ${data.action.accountName} has been approved.`,
         "success"
       );
     },
-    onError: (err: any) => {
-      toast("Approval Failed", err.message || "Could not approve action.", "error");
+
+    onError: async (err: any) => {
+      await queryClient.invalidateQueries({ queryKey: ["actions"] });
+      await queryClient.refetchQueries({ queryKey: ["actions"], type: "active" });
+
+      toast(
+        "Approval or execution failed",
+        err.message ||
+          "The result may be uncertain. Check the action status before retrying.",
+        "error"
+      );
     },
   });
 

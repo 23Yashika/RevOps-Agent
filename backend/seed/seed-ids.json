@@ -1,0 +1,128 @@
+{
+  "seededAt": "2026-10-12T03:49:01.307Z",
+  "mode": "simulated",
+  "hubspotPortalId": "simulated-demo-portal",
+  "totalCompanies": 10,
+  "companies": {
+    "northwind-logistics": {
+      "seedId": "revops-seed-001",
+      "name": "Northwind Logistics",
+      "domain": "northwindlogistics.com",
+      "companyId": "hs-company-001",
+      "contactId": "hs-contact-001",
+      "dealId": "hs-deal-001",
+      "contactEmail": "marcus.vance@northwindlogistics.com",
+      "dealName": "Northwind - Route Optimization Stalled Deal",
+      "expectedScore": 75,
+      "riskCategory": "High"
+    },
+    "helios-solar": {
+      "seedId": "revops-seed-002",
+      "name": "Helios Solar Systems",
+      "domain": "heliossolarsystems.com",
+      "companyId": "hs-company-002",
+      "contactId": "hs-contact-002",
+      "dealId": "hs-deal-002",
+      "contactEmail": "elena.rostova@heliossolarsystems.com",
+      "dealName": "Helios - Solar Grid Monitoring Stalled Expansion",
+      "expectedScore": 75,
+      "riskCategory": "High"
+    },
+    "pinecrest-education": {
+      "seedId": "revops-seed-003",
+      "name": "Pinecrest Education",
+      "domain": "pinecresteducation.org",
+      "companyId": "hs-company-003",
+      "contactId": "hs-contact-003",
+      "dealId": "hs-deal-003",
+      "contactEmail": "arthur.pendelton@pinecresteducation.org",
+      "dealName": "Pinecrest - Student Analytics Stalled Pilot",
+      "expectedScore": 75,
+      "riskCategory": "High"
+    },
+    "cascade-retail": {
+      "seedId": "revops-seed-004",
+      "name": "Cascade Retail Group",
+      "domain": "cascaderetailgroup.com",
+      "companyId": "hs-company-004",
+      "contactId": "hs-contact-004",
+      "dealId": "hs-deal-004",
+      "contactEmail": "sarah.jenkins@cascaderetailgroup.com",
+      "dealName": "Cascade - Store Inventory Stalled Evaluation",
+      "expectedScore": 35,
+      "riskCategory": "Medium"
+    },
+    "lumina-media": {
+      "seedId": "revops-seed-005",
+      "name": "Lumina Media",
+      "domain": "luminamedia.tv",
+      "companyId": "hs-company-005",
+      "contactId": "hs-contact-005",
+      "dealId": "hs-deal-005",
+      "contactEmail": "david.cho@luminamedia.tv",
+      "dealName": "Lumina - Transcoding Pipeline Stalled Add-on",
+      "expectedScore": 35,
+      "riskCategory": "Medium"
+    },
+    "meridian-insurance": {
+      "seedId": "revops-seed-006",
+      "name": "Meridian Insurance Brokers",
+      "domain": "meridianbrokers.com",
+      "companyId": "hs-company-006",
+      "contactId": "hs-contact-006",
+      "dealId": "hs-deal-006",
+      "contactEmail": "rebecca.sterling@meridianbrokers.com",
+      "dealName": "Meridian - Underwriting Automation Stalled Renewal",
+      "expectedScore": 35,
+      "riskCategory": "Medium"
+    },
+    "orbit-fintech": {
+      "seedId": "revops-seed-007",
+      "name": "Orbit Fintech",
+      "domain": "orbitfintech.io",
+      "companyId": "hs-company-007",
+      "contactId": "hs-contact-007",
+      "dealId": "hs-deal-007",
+      "contactEmail": "liam.gallagher@orbitfintech.io",
+      "dealName": "Orbit - High-Throughput Gateway Expansion",
+      "expectedScore": 10,
+      "riskCategory": "Low"
+    },
+    "vitalis-clinics": {
+      "seedId": "revops-seed-008",
+      "name": "Vitalis Clinics",
+      "domain": "vitalisclinics.health",
+      "companyId": "hs-company-008",
+      "contactId": "hs-contact-008",
+      "dealId": "hs-deal-008",
+      "contactEmail": "chloe.bennett@vitalisclinics.health",
+      "dealName": "Vitalis - Telehealth Patient Portal Deployment",
+      "expectedScore": 10,
+      "riskCategory": "Low"
+    },
+    "terra-agritech": {
+      "seedId": "revops-seed-009",
+      "name": "Terra Agritech",
+      "domain": "terraagritech.com",
+      "companyId": "hs-company-009",
+      "contactId": "hs-contact-009",
+      "dealId": "hs-deal-009",
+      "contactEmail": "carlos.mendez@terraagritech.com",
+      "dealName": "Terra - Telemetry Pipeline Integration",
+      "expectedScore": 0,
+      "riskCategory": "Low"
+    },
+    "atlas-construction": {
+      "seedId": "revops-seed-010",
+      "name": "Atlas Construction Tech",
+      "domain": "atlasconstructiontech.com",
+      "companyId": "hs-company-010",
+      "contactId": "hs-contact-010",
+      "dealId": "hs-deal-010",
+      "contactEmail": "brett.morales@atlasconstructiontech.com",
+      "dealName": "Atlas - Safety Scanner Initial Evaluation",
+      "expectedScore": 0,
+      "riskCategory": "Low / unknown"
+    }
+  }
+}
